@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Table(name = "direccion_envio")
 @AllArgsConstructor
 @NoArgsConstructor
 public class DireccionEnvio {
