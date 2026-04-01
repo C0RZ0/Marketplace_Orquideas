@@ -22,10 +22,9 @@ public class ItemCarrito {
     @JoinColumn(name = "carrito_id", nullable = false)
     private Carrito carrito;
 
-    // Temporal — será @ManyToOne Producto cuando exista esa entidad
-    @NotNull
-    @Column(name = "producto_id", nullable = false)
-    private Long productoId;
+    @ManyToOne
+    @JoinColumn(name = "producto_id", nullable = false)
+    private Producto producto;
 
     @Min(1)
     @Column(nullable = false)

@@ -27,7 +27,6 @@ public class Pedido {
     private Usuario usuario;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private List<ItemPedido> items = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -65,6 +64,5 @@ public class Pedido {
     protected void actualizacionPedido() {
         this.fechaActualizacion = LocalDateTime.now();
     }
-
 
 }
