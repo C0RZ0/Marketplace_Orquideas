@@ -5,18 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// @Entity: es una tabla en la base de datos
+// @Inheritance(JOINED): cada subclase (Orquidea, Maceta) tendrá su propia tabla, pero comparten el id con esta tabla padre
 @Entity
 @Table(name = "productos")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-
-
+@Data                           // Lombok: genera getters, setters, toString, equals
+@NoArgsConstructor              // Lombok: genera constructor vacío
+@AllArgsConstructor             // Lombok: genera constructor con todos los campos
 public abstract class Producto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)     // el id lo genera MySQL automáticamente (1, 2, 3...)
     private Long id;
 
     @Column(nullable = false)
@@ -32,5 +32,5 @@ public abstract class Producto {
     private String imageUrl;
 
     @Column(nullable = false)
-    private Boolean activo = true;
+    private Boolean activo = true;                          // por defecto todo producto empieza activo
 }

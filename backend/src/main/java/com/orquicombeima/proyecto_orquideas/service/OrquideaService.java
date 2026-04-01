@@ -18,7 +18,7 @@ public class OrquideaService {
     private final OrquideaRepository orquideaRepository;
 
     public List<OrquideaDTO> listarTodas() {
-        return orquideaRepository.findAll()
+        return orquideaRepository.findAll() // trae TODAS las orquídeas de la BD
                 .stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
