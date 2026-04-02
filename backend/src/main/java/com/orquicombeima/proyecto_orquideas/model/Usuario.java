@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 // Esta clase representa a los usuarios del sistema que pueden ser clientes o administradores según su rol
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuario")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

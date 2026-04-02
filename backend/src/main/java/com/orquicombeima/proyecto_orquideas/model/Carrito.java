@@ -10,7 +10,7 @@ import java.util.List;
 
 // Esta clase representa el Carrito de compras de cada usuario
 @Entity
-@Table(name = "carritos")
+@Table(name = "carrito")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
