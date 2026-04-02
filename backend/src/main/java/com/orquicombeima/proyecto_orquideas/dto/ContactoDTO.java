@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ContenidoPaginaDTO {
-    private Long id;
-    private String tipo;
-    private String titulo;
-    private String contenido;
-    private String imagenUrl;
-    private Integer orden;
+public class ContactoDTO {
+    private String numero;
+    private String mensaje;
+    private String urlWhatsapp;
 }
