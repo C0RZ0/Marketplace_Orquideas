@@ -9,27 +9,29 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 // @RestController indica que esta clase recibe peticiones HTTP y devuelve JSON
-// @RequestMapping define la ruta base — todos los endpoints empiezan con /api/orquideas
+// @RequestMapping define la ruta base: todos los endpoints empiezan con /api/orquideas
 // @RequiredArgsConstructor inyecta OrquideaService automáticamente
 @RestController
 @RequestMapping("/api/orquideas")
 @RequiredArgsConstructor
 
-
 public class OrquideaController {
 
     private final OrquideaService orquideaService;
 
-    // ResponseEntity<List<OrquideaDTO>> es el "sobre" que envuelve la respuesta HTTP con su código de estado (200 OK, 404, etc.) y el contenido
+    // GET /api/orquideas: devuelve todas las orquídeas
+    // ResponseEntity<List<OrquideaDTO>> es el "sobre" que envuelve la respuesta HTTP con su código de estado y el contenido
     @GetMapping
     public ResponseEntity<List<OrquideaDTO>> listarTodas() {
-        return ResponseEntity.ok(orquideaService.listarTodas()); // ok() = código 200
+        List<OrquideaDTO> orquideas = orquideaService.listarTodas();
+        return ResponseEntity.ok(orquideas);
     }
 
-    // GET /api/orquideas/{id} — devuelve una sola orquídea por su id
-    // @PathVariable extrae el {id} de la URL y lo pasa al metodo
+    // GET /api/orquideas/{id} : devuelve una sola orquídea por su id
+    // @PathVariable extrae el {id} de la URL y lo pasa al metodo como parametro
     @GetMapping("/{id}")
     public ResponseEntity<OrquideaDTO> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(orquideaService.obtenerPorId(id));
+        OrquideaDTO orquidea = orquideaService.obtenerPorId(id);
+        return ResponseEntity.ok(orquidea);
     }
 }
