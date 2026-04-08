@@ -1,26 +1,22 @@
-// Importar BrowserRouter y Routes para manejar la navegación entre páginas
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-// Importar componente Navbar
 import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';  // ← nuevo
+import Home   from './pages/Home';                // ← nuevo
 
 const App = () => {
   return (
-    // BrowserRouter envuelve todo para habilitar la navegación
     <BrowserRouter>
 
-      {/* El Navbar aparece en todas las páginas porque está fuera de Routes */}
+      {/* Navbar aparece en todas las páginas */}
       <Navbar />
 
-      {/* Routes es el contenedor de todas las páginas */}
-      {/* Cada Route es una página diferente según la URL */}
       <Routes>
-
-        {/* Por ahora solo tenemos la página de inicio */}
-        {/* path="/" significa que es la página principal */}
-        <Route path="/" element={<h1>Bienvenido a Orquídeas del Combeima</h1>} />
-
+        {/* La página de inicio */}
+        <Route path="/" element={<Home />} />
       </Routes>
+
+      {/* Footer también aparece en todas las páginas */}
+      <Footer />
 
     </BrowserRouter>
   );
