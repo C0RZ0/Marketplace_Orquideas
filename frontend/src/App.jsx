@@ -4,6 +4,7 @@ import Footer from './components/layout/Footer';
 import Home   from './pages/Home';                
 import Macetas from './pages/Macetas';   
 import Guia from './pages/Guia';
+import Contacto from './pages/Contacto';
 
 const App = () => {
   return (
@@ -19,6 +20,9 @@ const App = () => {
         <Route path="/macetas" element={<Macetas />} />
         {/* Página de guía de cuidado */}
         <Route path="/guia" element={<Guia />} />
+        {/* Página de contacto */}
+        <Route path="/contacto" element={<Contacto />} />
+        
         {/* Otras rutas se agregan aquí en el futuro */}
       </Routes>
 
