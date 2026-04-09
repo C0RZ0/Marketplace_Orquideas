@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
-import Footer from './components/layout/Footer';  // ← nuevo
-import Home   from './pages/Home';                // ← nuevo
+import Footer from './components/layout/Footer';  
+import Home   from './pages/Home';                
+import Macetas from './pages/Macetas';   
 
 const App = () => {
   return (
@@ -13,6 +14,8 @@ const App = () => {
       <Routes>
         {/* La página de inicio */}
         <Route path="/" element={<Home />} />
+        {/* Página de catálogo de macetas */}
+        <Route path="/macetas" element={<Macetas />} />
       </Routes>
 
       {/* Footer también aparece en todas las páginas */}
