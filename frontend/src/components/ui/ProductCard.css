@@ -1,0 +1,73 @@
+/* La tarjeta completa */
+.product-card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+  overflow: hidden;        /* Evita que la imagen se salga de las esquinas redondeadas */
+  width: 240px;
+  display: flex;
+  flex-direction: column;  /* Imagen arriba, texto abajo */
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+/* Al pasar el mouse, la tarjeta sube un poco */
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Contenedor de la imagen — necesitamos "position: relative" para el badge */
+.product-card-imagen-wrapper {
+  position: relative;
+}
+
+/* La imagen del producto */
+.product-card-imagen {
+  width: 100%;
+  height: 200px;
+  object-fit: cover; /* Recorta la imagen para que llene el espacio sin deformarse */
+}
+
+/* El badge (ej: "Novedad") — va encima de la imagen */
+.product-card-badge {
+  position: absolute;  /* Se posiciona relativo al wrapper */
+  top: 10px;
+  left: 10px;
+  background-color: #E91E8C;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+}
+
+/* Sección con nombre, precio, stock y botón */
+.product-card-info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.product-card-nombre {
+  font-size: 1rem;
+  color: #1B4332;
+  margin: 0;
+}
+
+.product-card-precio {
+  color: #E91E8C;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.product-card-stock {
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* Verde si hay stock, gris si está agotado */
+.product-card-stock.disponible { color: #2D6A4F; }
+.product-card-stock.agotado    { color: #999; }

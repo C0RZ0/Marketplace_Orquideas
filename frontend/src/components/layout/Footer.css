@@ -1,0 +1,68 @@
+/* Pie de página oscuro */
+.footer {
+  background-color: #1B4332;
+  color: #FAF7F5;
+  padding: 2.5rem 2rem 1.5rem;
+  margin-top: auto; /* Lo empuja al final de la página */
+}
+
+/* Las 3 columnas del footer */
+.footer-contenido {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;   /* En pantalla chica las columnas se apilan */
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Título de marca */
+.footer-marca h3 {
+  color: #E91E8C;
+  margin-bottom: 0.5rem;
+}
+
+.footer-marca p {
+  font-size: 0.85rem;
+  max-width: 200px;
+  line-height: 1.6;
+}
+
+/* Columnas de enlaces y contacto */
+.footer-columna h4 {
+  margin-bottom: 0.8rem;
+}
+
+.footer-columna ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.footer-columna a {
+  color: #FAF7F5;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+
+.footer-columna a:hover {
+  color: #E91E8C;
+}
+
+.footer-columna p {
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+/* Línea de copyright */
+.footer-copyright {
+  border-top: 1px solid #2D6A4F;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #aaa;
+}

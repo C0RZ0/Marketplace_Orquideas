@@ -1,0 +1,31 @@
+/* Caja que centra todo: el círculo y el texto */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+}
+
+/* El círculo giratorio */
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #e0e0e0;      /* Borde gris de fondo */
+  border-top: 5px solid #2D6A4F;  /* Esta parte verde es la que "gira" visualmente */
+  border-radius: 50%;             /* Lo vuelve un círculo */
+  animation: girar 0.8s linear infinite; /* Aplica la animación de abajo */
+}
+
+/* La animación: rota de 0 a 360 grados sin parar */
+@keyframes girar {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Texto debajo del spinner */
+.loading-texto {
+  color: #1B4332;
+  font-size: 0.95rem;
+}
