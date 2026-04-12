@@ -2,4 +2,4 @@
 
 Super Developers
 
-SDev
+SuperDevs
