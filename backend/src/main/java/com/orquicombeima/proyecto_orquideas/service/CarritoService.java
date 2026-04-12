@@ -67,6 +67,16 @@ public class CarritoService {
         return convertirADTO(carrito);
     }
 
+    // DELETE /api/carrito/vaciar
+    @Transactional
+    public void vaciarCarrito(Long idUsuario) {
+        Carrito carrito = carritoRepository.findByUsuarioId(idUsuario)
+                .orElseThrow(() -> new RuntimeException("No se encontró carrito para el usuario: " + idUsuario));
+
+        carrito.getItems().clear();
+        carritoRepository.save(carrito);
+    }
+
     // Convertir a CarritoDTO calculando los subtotales y el total
     private CarritoDTO convertirADTO(Carrito carrito) {
         List<ItemCarritoDTO> itemsDTO = carrito.getItems()
@@ -76,7 +86,7 @@ public class CarritoService {
 
         double total = itemsDTO.stream()
                 .map(ItemCarritoDTO::getSubtotal)
-                .reduce(0.0, Double::sum);
+                .reduce(0.0, Double::sum);  // Se suman los subtotales partiendo desde 0.0
 
         return CarritoDTO.builder()
                 .id(carrito.getId())
