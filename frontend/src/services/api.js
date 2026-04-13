@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 // Instancia base de axios apuntando al backend
+// En producción, definir VITE_API_URL con la URL real del backend
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
 });
 
 // Interceptor: antes de cada petición, adjunta el token JWT si existe

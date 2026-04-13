@@ -1,2 +1,14 @@
 #Archivos a ignorar al subir el proyecto a GitHub
 .idea/
+
+# Archivos de propiedades locales (pueden contener secretos)
+**/application-local.properties
+
+# Archivos de entorno
+.env
+.env.*
+!.env.example
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
