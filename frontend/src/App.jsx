@@ -19,7 +19,7 @@ import Carrito from './pages/Carrito';
 const App = () => {
   return (
     <BrowserRouter>
-      {/* Modificado (Matt): gestor simple de expiracion de sesion */}
+      {/* Gestor de sesión */}
       <SessionManager />
 
       <Navbar />
@@ -33,13 +33,14 @@ const App = () => {
         <Route path="/orquideas/:id" element={<DetalleOrquidea />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+
         <Route
           path="/carrito"
-          element={(
+          element={
             <ProtectedRoute>
               <Carrito />
             </ProtectedRoute>
-          )}
+          }
         />
 
         {/* Siempre de ultima */}

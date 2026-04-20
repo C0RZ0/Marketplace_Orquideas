@@ -6,7 +6,6 @@ import Button from '../components/ui/Button';
 import api from '../services/api';
 import useLazyAddToCart from '../hooks/useLazyAddToCart';
 
-
 const MENSAJE_ERROR_CONEXION =
   'No fue posible conectar con el servidor. Verifica que el backend este encendido e intenta nuevamente.';
 
@@ -17,12 +16,13 @@ const DetalleOrquidea = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  //NUEVOS ESTADOS
+  // NUEVOS ESTADOS
   const [imagenActiva, setImagenActiva] = useState(null);
   const [cantidad, setCantidad] = useState(1);
   const [tabActiva, setTabActiva] = useState('descripcion');
   const [tamanoSeleccionado, setTamanoSeleccionado] = useState('');
-  // Modificado (Matt): flujo de agregar con login lazy
+
+  // Agregar con login lazy
   const { agregarConLoginLazy } = useLazyAddToCart();
 
   useEffect(() => {
@@ -73,7 +73,6 @@ const DetalleOrquidea = () => {
         {/* IZQUIERDA: GALERÍA */}
         <div>
 
-          {/* Imagen principal */}
           <div style={{
             height: '400px',
             background: '#f5f5f5',
@@ -90,7 +89,6 @@ const DetalleOrquidea = () => {
             />
           </div>
 
-          {/* Miniaturas */}
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             {[orquidea.imageUrl, orquidea.imageUrl, orquidea.imageUrl].map((img, i) => (
               <img
@@ -140,7 +138,7 @@ const DetalleOrquidea = () => {
             ))}
           </div>
 
-          {/* Contador de cantidad */}
+          {/* Cantidad */}
           <div style={{ margin: '1rem 0' }}>
             <h4>Cantidad</h4>
 
@@ -208,9 +206,7 @@ const DetalleOrquidea = () => {
                 <h4>{rec.maceta?.nombre ?? rec.macetaNombre ?? 'Maceta recomendada'}</h4>
                 <p>{rec.descripcion}</p>
                 <p>
-                  ${
-                    (rec.maceta?.precio ?? rec.macetaPrecio)?.toLocaleString('es-CO')
-                  }
+                  ${(rec.maceta?.precio ?? rec.macetaPrecio)?.toLocaleString('es-CO')}
                 </p>
               </div>
             ))}

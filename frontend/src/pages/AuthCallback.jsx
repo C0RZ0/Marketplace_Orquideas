@@ -4,7 +4,10 @@ import useAuth from '../hooks/useAuth';
 import api from '../services/api';
 import Loading from '../components/ui/Loading';
 import useCarritoStore from '../store/carritoStore';
-import { consumePendingCartAdd, consumePostLoginRedirect } from '../utils/authFlowStorage';
+import {
+  consumePendingCartAdd,
+  consumePostLoginRedirect
+} from '../utils/authFlowStorage';
 
 const AuthCallback = () => {
   const [searchParams] = useSearchParams();
@@ -22,22 +25,30 @@ const AuthCallback = () => {
       }
 
       try {
+        // Guardar token
         localStorage.setItem('token', token);
 
+        // Obtener usuario
         const response = await api.get('/auth/me');
         const usuario = response.data;
 
+        // Guardar sesión global
         login(usuario, token);
 
-        // Modificado (Matt): si habia un "agregar al carrito" pendiente, lo ejecutamos
+        // Ejecutar acción pendiente (ej: agregar al carrito)
         const pendingAdd = consumePendingCartAdd();
         if (pendingAdd?.producto) {
-          const cantidad = Number(pendingAdd.cantidad) > 0 ? Number(pendingAdd.cantidad) : 1;
-          for (let i = 0; i < cantidad; i += 1) {
+          const cantidad =
+            Number(pendingAdd.cantidad) > 0
+              ? Number(pendingAdd.cantidad)
+              : 1;
+
+          for (let i = 0; i < cantidad; i++) {
             agregar(pendingAdd.producto);
           }
         }
 
+        // Redirección inteligente
         const redirectPath = consumePostLoginRedirect();
 
         if (redirectPath) {
@@ -47,6 +58,7 @@ const AuthCallback = () => {
         } else {
           navigate('/', { replace: true });
         }
+
       } catch (err) {
         localStorage.removeItem('token');
         navigate('/login', { replace: true });
@@ -56,7 +68,7 @@ const AuthCallback = () => {
     procesarLogin();
   }, [agregar, login, navigate, searchParams]);
 
-  return <Loading mensaje="Finalizando autenticacion..." />;
+  return <Loading mensaje="Finalizando autenticación..." />;
 };
 
 export default AuthCallback;

@@ -1,6 +1,5 @@
 // Login.jsx
 // Pantalla de inicio de sesion con Google
-// El boton redirige al backend que maneja todo el proceso de OAuth2
 
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -18,13 +17,13 @@ const Login = () => {
     if (isLoggedIn) {
       navigate('/');
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate]);
 
-  // Al hacer clic, redirigimos al endpoint de Google OAuth2 del backend
   const handleLoginGoogle = () => {
-    // Modificado (Matt): conservamos la ruta destino para volver luego del login
+    // Guardar a dónde quería ir el usuario
     const from = location.state?.from;
     if (from) savePostLoginRedirect(from);
+
     window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
 
@@ -38,7 +37,6 @@ const Login = () => {
       padding: '2rem'
     }}>
 
-      {/* Card central */}
       <div style={{
         backgroundColor: '#FFFFFF',
         borderRadius: '16px',
@@ -49,7 +47,6 @@ const Login = () => {
         textAlign: 'center'
       }}>
 
-        {/* Logo */}
         <img
           src={logo}
           alt="Logo Orquideas del Combeima"
@@ -59,11 +56,12 @@ const Login = () => {
         <h1 style={{ color: '#1B4332', fontSize: '1.5rem', marginBottom: '0.5rem' }}>
           Bienvenido
         </h1>
+
         <p style={{ color: '#666', marginBottom: '2rem', fontSize: '0.95rem' }}>
           Inicia sesion para acceder a tu cuenta
         </p>
 
-        {/* Modificado (Matt): aviso simple segun el motivo del login */}
+        {/* Mensajes según motivo */}
         {location.state?.motivo === 'carrito' && (
           <p style={{ color: '#8a5a00', marginBottom: '1rem', fontSize: '0.9rem' }}>
             Necesitas iniciar sesion para agregar productos al carrito.
@@ -76,7 +74,6 @@ const Login = () => {
           </p>
         )}
 
-        {/* Boton de Google */}
         <button
           onClick={handleLoginGoogle}
           style={{
@@ -103,19 +100,26 @@ const Login = () => {
           Continuar con Google
         </button>
 
-        {/* Lista de beneficios */}
         <div style={{ textAlign: 'left' }}>
           <p style={{ color: '#1B4332', fontWeight: 'bold', marginBottom: '0.8rem', fontSize: '0.9rem' }}>
             Al iniciar sesion puedes:
           </p>
+
           {[
             'Agregar productos al carrito',
             'Ver el historial de tus pedidos',
             'Guardar tus direcciones de envio',
           ].map((beneficio) => (
-            <div key={beneficio} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
+            <div key={beneficio} style={{
+              display: 'flex',
+              gap: '0.5rem',
+              marginBottom: '0.5rem',
+              alignItems: 'center'
+            }}>
               <span style={{ color: '#2D6A4F', fontWeight: 'bold' }}>✓</span>
-              <p style={{ color: '#666', fontSize: '0.85rem', margin: 0 }}>{beneficio}</p>
+              <p style={{ color: '#666', fontSize: '0.85rem', margin: 0 }}>
+                {beneficio}
+              </p>
             </div>
           ))}
         </div>
