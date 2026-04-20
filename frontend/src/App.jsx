@@ -14,10 +14,7 @@ import DetalleOrquidea from './pages/DetalleOrquidea';
 import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
 import NotFound from './pages/NotFound';
-import WhatsAppBoton from './components/ui/WhatsAppBoton';
-import Login from './pages/Login';
-import ProtectedRoute from './components/layout/ProtectedRoute';
-import SessionExpiryWarning from './components/ui/SessionExpiryWarning';
+import Carrito from './pages/Carrito';
 
 const App = () => {
   return (
@@ -27,16 +24,8 @@ const App = () => {
 
       <Navbar />
 
-      {/* Advertencia global de expiración de sesion */}
-      <SessionExpiryWarning />
-
       <Routes>
         <Route path="/" element={<Home />} />
-        {/* Inicio de sesion con Google */}
-        <Route path="/login" element={<Login />} />
-        {/* Callback después de autenticar con Google */}
-        <Route path="/auth/callback" element={<AuthCallback />} />
-        {/* Página de catálogo de macetas */}
         <Route path="/macetas" element={<Macetas />} />
         <Route path="/guia" element={<Guia />} />
         <Route path="/contacto" element={<Contacto />} />
@@ -44,12 +33,14 @@ const App = () => {
         <Route path="/orquideas/:id" element={<DetalleOrquidea />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route path="/carrito" element={
-          <ProtectedRoute>
-            <Carrito />
-          </ProtectedRoute>
-        } />
-
+        <Route
+          path="/carrito"
+          element={(
+            <ProtectedRoute>
+              <Carrito />
+            </ProtectedRoute>
+          )}
+        />
 
         {/* Siempre de ultima */}
         <Route path="*" element={<NotFound />} />
@@ -57,7 +48,6 @@ const App = () => {
 
       <Footer />
       <WhatsAppBoton />
-
     </BrowserRouter>
   );
 };

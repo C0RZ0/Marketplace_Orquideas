@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import api from '../services/api';
 import Loading from '../components/ui/Loading';
 import useCarritoStore from '../store/carritoStore';
 import { consumePendingCartAdd, consumePostLoginRedirect } from '../utils/authFlowStorage';
@@ -11,22 +13,20 @@ const AuthCallback = () => {
   const agregar = useCarritoStore((state) => state.agregar);
 
   useEffect(() => {
-    const token = searchParams.get('token');
+    const procesarLogin = async () => {
+      const token = searchParams.get('token');
 
-    if (!token) {
-      setError('No se recibio un token valido desde el inicio de sesion.');
-      return;
-    }
+      if (!token) {
+        navigate('/login', { replace: true });
+        return;
+      }
 
       try {
-        // Guardamos el token temporalmente para que api.js lo use en la siguiente peticion
         localStorage.setItem('token', token);
 
-        // Le preguntamos al backend quién es el usuario con ese token
         const response = await api.get('/auth/me');
         const usuario = response.data;
 
-        // Guardamos el usuario y el token en Zustand
         login(usuario, token);
 
         // Modificado (Matt): si habia un "agregar al carrito" pendiente, lo ejecutamos
@@ -40,23 +40,21 @@ const AuthCallback = () => {
 
         const redirectPath = consumePostLoginRedirect();
 
-        // Si es administrador lo mandamos al panel admin, si no al inicio
         if (redirectPath) {
-          navigate(redirectPath);
+          navigate(redirectPath, { replace: true });
         } else if (usuario.rol === 'ADMINISTRADOR') {
-          navigate('/admin');
+          navigate('/admin', { replace: true });
         } else {
-          navigate('/');
+          navigate('/', { replace: true });
         }
       } catch (err) {
-        // Si algo falla limpiamos y mandamos al login
         localStorage.removeItem('token');
-        navigate('/login');
+        navigate('/login', { replace: true });
       }
     };
 
     procesarLogin();
-  }, []);
+  }, [agregar, login, navigate, searchParams]);
 
   return <Loading mensaje="Finalizando autenticacion..." />;
 };
