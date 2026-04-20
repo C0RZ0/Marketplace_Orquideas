@@ -10,6 +10,9 @@ import DetalleOrquidea from './pages/DetalleOrquidea';
 import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
 import NotFound from './pages/NotFound';
+import WhatsAppBoton from './components/ui/WhatsAppBoton';
+import Login from './pages/Login';
+import ProtectedRoute from './components/layout/ProtectedRoute';
 import SessionExpiryWarning from './components/ui/SessionExpiryWarning';
 
 const App = () => {
@@ -41,12 +44,22 @@ const App = () => {
         <Route path="/orquideas/:id" element={<DetalleOrquidea />} />
         {/* Cualquier ruta inexistente */}
         <Route path="*" element={<NotFound />} />
-        
+        {/* Página de login */}
+        <Route path="/login" element={<Login />} />
+        {/* Ejemplo de ruta protegida — el carrito solo lo ven usuarios logueados */}
+        <Route path="/carrito" element={
+          <ProtectedRoute>
+            <h1>Carrito — proximamente</h1>
+          </ProtectedRoute>
+        } />
         {/* Otras rutas se agregan aquí en el futuro */}
+
       </Routes>
 
       {/* Footer también aparece en todas las páginas */}
       <Footer />
+      {/* Botón flotante de WhatsApp */}
+      <WhatsAppBoton />
 
     </BrowserRouter>
   );
