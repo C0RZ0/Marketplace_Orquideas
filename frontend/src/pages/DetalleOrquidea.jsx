@@ -4,7 +4,7 @@ import Loading from '../components/ui/Loading';
 import ConnectionError from '../components/ui/ConnectionError';
 import Button from '../components/ui/Button';
 import api from '../services/api';
-import useCarritoStore from '../store/carritoStore';
+import useLazyAddToCart from '../hooks/useLazyAddToCart';
 
 
 const MENSAJE_ERROR_CONEXION =
@@ -22,7 +22,8 @@ const DetalleOrquidea = () => {
   const [cantidad, setCantidad] = useState(1);
   const [tabActiva, setTabActiva] = useState('descripcion');
   const [tamanoSeleccionado, setTamanoSeleccionado] = useState('');
-  const agregar = useCarritoStore(state => state.agregar);
+  // Modificado (Matt): flujo de agregar con login lazy
+  const { agregarConLoginLazy } = useLazyAddToCart();
 
   useEffect(() => {
     const cargarDetalle = async () => {
@@ -32,7 +33,7 @@ const DetalleOrquidea = () => {
         const response = await api.get(`/orquideas/${id}`);
         setOrquidea(response.data);
 
-        // 🔧 inicializar imagen principal
+        // inicializar imagen principal
         setImagenActiva(response.data.imageUrl);
       } catch (err) {
         console.error('Error cargando detalle:', err);
@@ -116,7 +117,7 @@ const DetalleOrquidea = () => {
           <h1>{orquidea.nombre}</h1>
           <p>${orquidea.precio?.toLocaleString('es-CO')}</p>
 
-          {/* 🔧 Selector de tamaño */}
+          {/* Selector de tamaño */}
           <div style={{ margin: '1rem 0' }}>
             <h4>Tamaño</h4>
 
@@ -151,19 +152,20 @@ const DetalleOrquidea = () => {
           <Button
             text="Agregar al carrito"
             onClick={() => {
-              for (let i = 0; i < cantidad; i++) {
-                agregar({
-                  id : orquidea.id,
+              agregarConLoginLazy(
+                {
+                  id: orquidea.id,
                   nombre: orquidea.nombre,
                   precio: orquidea.precio,
                   imagen: orquidea.imageUrl,
                   stock: orquidea.stock
-                  });
-              }
+                },
+                cantidad
+              );
             }}
           />
 
-          {/* 🔧 Tabs */}
+          {/* Tabs */}
           <div style={{ marginTop: '2rem' }}>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button onClick={() => setTabActiva('descripcion')}>

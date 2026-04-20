@@ -3,6 +3,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import WhatsAppBoton from './components/ui/WhatsAppBoton';
 import ProtectedRoute from './components/layout/ProtectedRoute';
+import SessionManager from './components/layout/SessionManager';
 
 import Home from './pages/Home';
 import Macetas from './pages/Macetas';
@@ -21,6 +22,8 @@ import SessionExpiryWarning from './components/ui/SessionExpiryWarning';
 const App = () => {
   return (
     <BrowserRouter>
+      {/* Modificado (Matt): gestor simple de expiracion de sesion */}
+      <SessionManager />
 
       <Navbar />
 

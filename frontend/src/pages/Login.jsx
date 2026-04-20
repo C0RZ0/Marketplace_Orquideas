@@ -1,13 +1,15 @@
 // Login.jsx
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import api from '../services/api';
 import logo from '../assets/logo.png';
+import { savePostLoginRedirect } from '../utils/authFlowStorage';
 
 const Login = () => {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Si el usuario ya esta logueado, lo mandamos al inicio
   useEffect(() => {
