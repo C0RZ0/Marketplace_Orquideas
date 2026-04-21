@@ -3,6 +3,7 @@ import './Navbar.css';
 import logo from '../../assets/logo.png';
 import useAuth from '../../hooks/useAuth';
 import useCarritoStore from '../../store/carritoStore';
+import { useState } from 'react';
 
 const Navbar = () => {
   const { isLoggedIn, usuario, logout } = useAuth();
@@ -10,9 +11,12 @@ const Navbar = () => {
   const totalItems = useCarritoStore((state) => state.totalItems());
 
   const handleLogout = () => {
+    setMostrarModalSalir(false);
     logout();
     navigate('/');
   };
+
+  const [mostrarModalSalir, setMostrarModalSalir] = useState(false);
 
   return (
     <nav className="navbar">
@@ -49,7 +53,7 @@ const Navbar = () => {
                 Hola, {usuario.nombre}
               </span>
               <button
-                onClick={handleLogout}
+                onClick={() => setMostrarModalSalir(true)}
                 style={{
                   backgroundColor: 'transparent',
                   border: '1px solid #2D6A4F',
@@ -72,6 +76,62 @@ const Navbar = () => {
 
         </div>
       </div>
+
+      {/* Modal de confirmacion para cerrar sesion */}
+      {mostrarModalSalir && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#fff',
+            borderRadius: '12px',
+            padding: '2rem',
+            maxWidth: '400px',
+            textAlign: 'center',
+            width: '90%'
+          }}>
+            <h3 style={{color: '#1B4332', marginBottom: '0.5rem'}}>
+              Cerrar sesión
+            </h3>
+            <p style={{color: '#666', marginBottom: '1.5rem'}}>
+              ¿Estás seguro que quieres cerrar sesión?
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+              <button
+                onClick={() => setMostrarModalSalir(false)}
+                style={{
+                  padding: '0.6rem 1.5rem',
+                  borderRadius: '20px',
+                  border: '1px solid #ddd',
+                  cursor: 'pointer',
+                  backgroundColor: '#fff'
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleLogout}
+                style={{
+                  padding: '0.6rem 1.5rem',
+                  borderRadius: '20px',
+                  border: 'none', 
+                  cursor: 'pointer',
+                  backgroundColor: '#2D6A4F',
+                  color: '#fff'
+                }}
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
