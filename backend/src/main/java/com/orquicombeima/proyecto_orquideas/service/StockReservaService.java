@@ -17,7 +17,7 @@ import java.util.List;
 
 // Este servicio se encarga de toda la lógica de reserva de stock:
 //  - Verificar si hay disponibilidad antes de agregar al carrito
-//  - Crear reservas cuando el usuario va a pagar (aparta el stock por un tiempo)
+//  - Crear reservas cuando el usuario agrega al carrito o va a pagar (aparta el stock por un tiempo)
 //  - Liberar reservas que se vencieron (si el usuario abandona el checkout)
 //  - Confirmar reservas cuando el pago se completa (descuenta el stock real)
 //  - Cancelar reservas si el usuario cancela antes de pagar
@@ -44,9 +44,34 @@ public class StockReservaService {
         return stockDisponible >= cantidadSolicitada;
     }
 
-    // Crea una reserva por cada item del carrito
+    // Crea una reserva para UN SOLO producto (se usa al agregar un item al carrito)
+    // Aparta esa cantidad del stock disponible para que nadie más la compre durante 15 minutos
+    @Transactional
+    public void crearReserva(Carrito carrito, Producto producto, Integer cantidad) {
+        // Revisamos una vez más que todavía haya disponibilidad para este producto
+        int stockDisponible = producto.getStock() - producto.getStockReservado();
+        if (stockDisponible < cantidad) {
+            throw new RuntimeException("No hay suficiente stock para el producto: " + producto.getNombre());
+        }
+
+        // Subimos el stockReservado del producto (lo apartamos del stock disponible)
+        producto.setStockReservado(producto.getStockReservado() + cantidad);
+        productoRepository.save(producto);
+
+        // Creamos la reserva con estado ACTIVA y una fecha de expiración a futuro
+        ReservaCarrito reserva = new ReservaCarrito();
+        reserva.setCarrito(carrito);
+        reserva.setProducto(producto);
+        reserva.setCantidadReservada(cantidad);
+        reserva.setEstado(EstadoReserva.ACTIVA);
+        reserva.setFechaCreacion(LocalDateTime.now());
+        reserva.setFechaExpiracion(LocalDateTime.now().plusMinutes(MINUTOS_EXPIRACION));
+
+        reservaCarritoRepository.save(reserva);
+    }
+
+    // Crea reservas para TODOS los items del carrito (se usa al iniciar el checkout)
     // Esto se llama cuando el usuario da click en "Ir a pagar"
-    // Aparta el stock para que nadie más lo compre mientras termina de pagar
     @Transactional
     public void crearReserva(Long idCarrito) {
         Carrito carrito = carritoRepository.findById(idCarrito)

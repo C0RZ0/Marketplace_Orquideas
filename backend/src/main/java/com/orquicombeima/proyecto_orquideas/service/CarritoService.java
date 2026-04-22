@@ -41,6 +41,7 @@ public class CarritoService {
     // POST /api/carrito/agregar
     // Agrega un producto al carrito del usuario autenticado
     // Si el producto ya estaba en el carrito, le suma la cantidad nueva a la existente
+    // Además crea una reserva de stock para apartar el producto por 30 minutos
     @Transactional
     public CarritoDTO agregarItem(AgregarItemRequestDTO request, String emailUsuario) {
         // Buscamos al usuario por su email
@@ -96,6 +97,10 @@ public class CarritoService {
             itemCarritoRepository.save(nuevoItem);
             carrito.getItems().add(nuevoItem);
         }
+
+        // Creamos la reserva de stock: apartamos la cantidad nueva por 30 minutos
+        // Esto también incrementa el stock_reservado del producto
+        stockReservaService.crearReserva(carrito, producto, request.getCantidad());
 
         return convertirADTO(carrito);
     }
