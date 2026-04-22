@@ -3,7 +3,7 @@ import Button from './Button';
 import { Link } from 'react-router-dom';
 import useLazyAddToCart from '../../hooks/useLazyAddToCart';
 
-const ProductCard = ({ id, nombre, precio, imagen, badge, stock }) => {
+const ProductCard = ({ id, nombre, precio, imagen, badge, stock, tipo = 'orquidea' }) => {
 
   // Agregar al carrito con login lazy
   const { agregarConLoginLazy } = useLazyAddToCart();
@@ -48,8 +48,8 @@ const ProductCard = ({ id, nombre, precio, imagen, badge, stock }) => {
   );
 
   return (
-    id ? (
-      <Link to={`/orquideas/${id}`} style={{ textDecoration: 'none' }}>
+    id && tipo === 'orquidea' ? (
+      <Link to={`/orquidea/${id}`} style={{ textDecoration: 'none' }}>
         {cardContent}
       </Link>
     ) : (
