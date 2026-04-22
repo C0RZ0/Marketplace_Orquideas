@@ -3,7 +3,7 @@ import { expireSession } from '../utils/authSession';
 
 // Instancia base de axios apuntando al backend
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'https://marketplaceorquideas-production.up.railway.app/api',
 });
 
 // Interceptor: antes de cada petición, adjunta el token JWT si existe
