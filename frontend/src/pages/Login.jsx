@@ -24,7 +24,7 @@ const Login = () => {
     const from = location.state?.from;
     if (from) savePostLoginRedirect(from);
 
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+      window.location.href = 'https://marketplaceorquideas-production.up.railway.app/oauth2/authorization/google';
   };
 
   return (
