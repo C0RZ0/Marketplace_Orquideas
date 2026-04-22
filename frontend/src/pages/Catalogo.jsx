@@ -30,6 +30,7 @@ const Catalogo = () => {
   const [orquideas, setOrquideas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [errorPrecio, setErrorPrecio] = useState('');
   const busquedaHero = searchParams.get('busqueda') || '';
   const [filtros, setFiltros] = useState(() => ({
     variedad: searchParams.get('variedad') || '',
@@ -167,14 +168,15 @@ const Catalogo = () => {
           <button
             onClick={() => {
               if (filtros.precioMin && filtros.precioMax && Number(filtros.precioMax) < Number(filtros.precioMin)) {
-                alert('El precio máximo no puede ser menor al precio mínimo');
+                setErrorPrecio('El precio máximo no puede ser menor al precio mínimo');
                 return;
               }
+              setErrorPrecio('');
               cargarOrquideas();
             }}
             style={{
               padding: '0.5rem 1rem',
-              backgroundColor: '#1B4332',
+              backgroundColor: '#1B4332', 
               color: '#FAF7F5',
               border: 'none',
               borderRadius: '8px',
@@ -187,6 +189,11 @@ const Catalogo = () => {
 
         </div>
 
+        {errorPrecio && (
+          <p style={{ color: '#E91E8C', marginBottom: '1rem', fontSize: '0.9rem' }}>
+            {errorPrecio}
+          </p>
+        )}
 
         {/* Resultados */}
         {loading ? (
