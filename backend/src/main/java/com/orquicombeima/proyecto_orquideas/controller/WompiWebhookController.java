@@ -18,7 +18,7 @@ public class WompiWebhookController {
     private final WompiWebhookService wompiWebhookService;
 
     @PostMapping("/wompi")
-    public ResponseEntity<Void> rercibirEvento(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Void> recibirEvento(@RequestBody Map<String, Object> payload) {
         wompiWebhookService.procesarEvento(payload);
         return ResponseEntity.ok().build();
     }
