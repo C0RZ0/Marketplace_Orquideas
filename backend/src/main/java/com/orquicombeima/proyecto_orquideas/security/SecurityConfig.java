@@ -53,7 +53,8 @@ public class SecurityConfig {
                         // Rutas protegidas para clientes y administradores
                         .requestMatchers(
                                 "/api/carrito/**",
-                                "/api/pedidos/**"
+                                "/api/pedidos/**",
+                                "/api/contacto-whatsapp/**"
                         ).hasAnyRole("CLIENTE", "ADMINISTRADOR")
                         // Rutas protegidas solo para administradores
                         .requestMatchers("/api/admin/**").hasRole("ADMINISTRADOR")
