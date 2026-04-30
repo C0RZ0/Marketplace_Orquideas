@@ -24,7 +24,8 @@ const Login = () => {
     const from = location.state?.from;
     if (from) savePostLoginRedirect(from);
 
-      window.location.href = 'https://marketplaceorquideas-production.up.railway.app/oauth2/authorization/google';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      window.location.href = `${apiUrl}/oauth2/authorization/google`;
   };
 
   return (

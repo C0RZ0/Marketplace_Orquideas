@@ -77,7 +77,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
 
-        configuration.setAllowedOrigins(List.of("https://marketplace-orquideas.vercel.app"));  // Ruta del frontend
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000"));  // Rutas del frontend local
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));    // Métodos HTTP permitidos
         configuration.setAllowedHeaders(List.of("*"));  // Permitir todos los encabezados
         configuration.setAllowCredentials(true);    // Permitir el envío de cookies y credenciales
