@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RecomendacionAdminDTO {
+public class RecomendacionMacetaAdminDTO {
 
     @NotNull
     private Long idOrquidea;
