@@ -49,6 +49,26 @@ public class RecomendacionAdminService {
         return convertirADTO(recomendacion);
     }
 
+    // Metodo PUT para actualizar una recomendacion
+    @Transactional
+    public RecomendacionDTO actualizarRecomendacion(Long id, RecomendacionAdminDTO dto) {
+        RecomendacionMaceta recomendacion = recomendacionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Recomendacion no encontrada con el id: " + id));
+
+        Orquidea orquidea = orquideaRepository.findById(dto.getIdOrquidea())
+                .orElseThrow(() -> new RuntimeException("Orquidea no encontrada con el id: " + dto.getIdOrquidea()));
+
+        Maceta maceta = macetaRepository.findById(dto.getIdMaceta())
+                .orElseThrow(() -> new RuntimeException("Maceta no encontrada con el id: " + dto.getIdMaceta()));
+
+        recomendacion.setOrquidea(orquidea);
+        recomendacion.setMaceta(maceta);
+        recomendacion.setDescripcion(dto.getDescripcion());
+
+        recomendacionRepository.save(recomendacion);
+        return convertirADTO(recomendacion);
+    }
+
     // Función para convertir a DTO
     private RecomendacionDTO convertirADTO(RecomendacionMaceta recomendacion) {
         return RecomendacionDTO.builder()
