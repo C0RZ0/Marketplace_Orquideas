@@ -2,6 +2,8 @@ package com.orquicombeima.proyecto_orquideas.service;
 
 import com.orquicombeima.proyecto_orquideas.dto.RecomendacionAdminDTO;
 import com.orquicombeima.proyecto_orquideas.dto.RecomendacionDTO;
+import com.orquicombeima.proyecto_orquideas.model.Maceta;
+import com.orquicombeima.proyecto_orquideas.model.Orquidea;
 import com.orquicombeima.proyecto_orquideas.model.RecomendacionMaceta;
 import com.orquicombeima.proyecto_orquideas.repository.MacetaRepository;
 import com.orquicombeima.proyecto_orquideas.repository.OrquideaRepository;
@@ -9,6 +11,7 @@ import com.orquicombeima.proyecto_orquideas.repository.RecomendacionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +29,24 @@ public class RecomendacionAdminService {
                 .stream()
                 .map(this::convertirADTO)
                 .toList();
+    }
+
+    // Metodo POST para crear una nueva recomendacion
+    @Transactional
+    public RecomendacionDTO crearRecomendacion(RecomendacionAdminDTO dto) {
+        Orquidea orquidea = orquideaRepository.findById(dto.getIdOrquidea())
+                .orElseThrow(() -> new RuntimeException("Orquidea no encontrada con el id: " + dto.getIdOrquidea()));
+
+        Maceta maceta = macetaRepository.findById(dto.getIdMaceta())
+                .orElseThrow(() -> new RuntimeException("Maceta no encontrada con el id: " + dto.getIdMaceta()));
+
+        RecomendacionMaceta recomendacion = new RecomendacionMaceta();
+        recomendacion.setMaceta(maceta);
+        recomendacion.setOrquidea(orquidea);
+        recomendacion.setDescripcion(dto.getDescripcion());
+
+        recomendacionRepository.save(recomendacion);
+        return convertirADTO(recomendacion);
     }
 
     // Función para convertir a DTO
