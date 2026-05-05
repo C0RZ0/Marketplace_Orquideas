@@ -1,0 +1,43 @@
+package com.orquicombeima.proyecto_orquideas.service;
+
+import com.orquicombeima.proyecto_orquideas.dto.RecomendacionAdminDTO;
+import com.orquicombeima.proyecto_orquideas.dto.RecomendacionDTO;
+import com.orquicombeima.proyecto_orquideas.model.RecomendacionMaceta;
+import com.orquicombeima.proyecto_orquideas.repository.MacetaRepository;
+import com.orquicombeima.proyecto_orquideas.repository.OrquideaRepository;
+import com.orquicombeima.proyecto_orquideas.repository.RecomendacionRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class RecomendacionAdminService {
+
+    private final RecomendacionRepository recomendacionRepository;
+    private final OrquideaRepository orquideaRepository;
+    private final MacetaRepository macetaRepository;
+
+    // Metodo GET para listar todas las recomendaciones
+    public List<RecomendacionDTO> listarTodas() {
+        return recomendacionRepository.findAll()
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
+
+    // Función para convertir a DTO
+    private RecomendacionDTO convertirADTO(RecomendacionMaceta recomendacion) {
+        return RecomendacionDTO.builder()
+                .id(recomendacion.getId())
+                .idOrquidea(recomendacion.getOrquidea().getId())
+                .nombreOrquidea(recomendacion.getOrquidea().getNombre())
+                .idMaceta(recomendacion.getMaceta().getId())
+                .nombreMaceta(recomendacion.getMaceta().getNombre())
+                .descripcion(recomendacion.getDescripcion())
+                .build();
+    }
+
+}
