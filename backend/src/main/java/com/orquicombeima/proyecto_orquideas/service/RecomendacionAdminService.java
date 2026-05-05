@@ -69,6 +69,15 @@ public class RecomendacionAdminService {
         return convertirADTO(recomendacion);
     }
 
+    // Metodo DELETE para eliminar una recomendacion
+    @Transactional
+    public void eliminarRecomendacion(Long id) {
+        RecomendacionMaceta recomendacion = recomendacionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Recomendacion no encontrada con el id: " + id));
+
+        recomendacionRepository.delete(recomendacion);
+    }
+
     // Función para convertir a DTO
     private RecomendacionDTO convertirADTO(RecomendacionMaceta recomendacion) {
         return RecomendacionDTO.builder()
