@@ -33,4 +33,10 @@ public class RecomendacionAdminController {
     public ResponseEntity<RecomendacionDTO> actualizarRecomendacion(@PathVariable Long id, @Valid @RequestBody RecomendacionAdminDTO recomendacion) {
         return ResponseEntity.ok(recomendacionAdminService.actualizarRecomendacion(id, recomendacion));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<RecomendacionDTO> eliminarRecomendacion(@PathVariable Long id) {
+        recomendacionAdminService.eliminarRecomendacion(id);
+        return ResponseEntity.noContent().build();
+    }
 }
