@@ -28,4 +28,9 @@ public class RecomendacionAdminController {
     public ResponseEntity<RecomendacionDTO> crearRecomendacion(@Valid @RequestBody RecomendacionAdminDTO recomendacion) {
         return ResponseEntity.ok(recomendacionAdminService.crearRecomendacion(recomendacion));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RecomendacionDTO> actualizarRecomendacion(@PathVariable Long id, @Valid @RequestBody RecomendacionAdminDTO recomendacion) {
+        return ResponseEntity.ok(recomendacionAdminService.actualizarRecomendacion(id, recomendacion));
+    }
 }
