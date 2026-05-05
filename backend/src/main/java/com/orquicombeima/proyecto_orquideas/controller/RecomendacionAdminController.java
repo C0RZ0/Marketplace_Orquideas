@@ -1,13 +1,13 @@
 package com.orquicombeima.proyecto_orquideas.controller;
 
+import com.orquicombeima.proyecto_orquideas.dto.RecomendacionAdminDTO;
 import com.orquicombeima.proyecto_orquideas.dto.RecomendacionDTO;
 import com.orquicombeima.proyecto_orquideas.service.RecomendacionAdminService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +22,10 @@ public class RecomendacionAdminController {
     @GetMapping
     public ResponseEntity<List<RecomendacionDTO>> listarTodas() {
         return ResponseEntity.ok(recomendacionAdminService.listarTodas());
+    }
+
+    @PostMapping
+    public ResponseEntity<RecomendacionDTO> crearRecomendacion(@Valid @RequestBody RecomendacionAdminDTO recomendacion) {
+        return ResponseEntity.ok(recomendacionAdminService.crearRecomendacion(recomendacion));
     }
 }
