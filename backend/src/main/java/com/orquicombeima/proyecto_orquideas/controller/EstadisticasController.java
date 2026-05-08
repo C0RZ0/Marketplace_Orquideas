@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/estadisticas")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMINISTRADOR')")
 public class EstadisticasController {
 
     private final EstadisticasService estadisticasService;
 
-    @GetMapping("/estadisticas")
+    @GetMapping
     public ResponseEntity<EstadisticasDTO> obtenerEstadisticas() {
         return ResponseEntity.ok(estadisticasService.obtenerEstadisticas());
     }
