@@ -51,9 +51,9 @@ public class EstadisticasService {
         List<Object[]> resultados = pedidoRepository.findVentasPorMes(hace6Meses);
 
         List<VentasMesDTO> ventasPorMes = resultados.stream()
-                .map(row -> {
-                    int mes = ((Number) row[0]).intValue();
-                    double total = ((Number) row[2]).doubleValue();
+                .map(fila -> {
+                    int mes = ((Number) fila[0]).intValue();
+                    double total = ((Number) fila[2]).doubleValue();
 
                     String nombreMes = Month.of(mes).getDisplayName(TextStyle.FULL, new Locale("es", "CO"));
 
