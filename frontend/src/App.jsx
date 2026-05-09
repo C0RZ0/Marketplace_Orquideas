@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
 import NotFound from './pages/NotFound';
 import Carrito from './pages/Carrito';
+import Checkout from './pages/Checkout';
 
 const App = () => {
   return (
@@ -25,6 +26,11 @@ const App = () => {
       <Navbar />
 
       <Routes>
+        <Route path="/checkout" element={
+          <ProtectedRoute>
+            <Checkout />
+          </ProtectedRoute>
+        } />
         <Route path="/" element={<Home />} />
         <Route path="/macetas" element={<Macetas />} />
         <Route path="/guia" element={<Guia />} />
