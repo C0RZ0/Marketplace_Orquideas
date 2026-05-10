@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import WhatsAppBoton from './components/ui/WhatsAppBoton';
+import ChatbotWidget from './components/ui/ChatbotWidget';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import SessionManager from './components/layout/SessionManager';
 import MiCuenta from './pages/MiCuenta';
@@ -60,6 +61,7 @@ const App = () => {
 
       <Footer />
       <WhatsAppBoton />
+        <ChatbotWidget />
     </BrowserRouter>
   );
 };
