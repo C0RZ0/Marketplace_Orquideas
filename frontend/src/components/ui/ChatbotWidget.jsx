@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import api from '../../services/api';
 import './ChatbotWidget.css';
+import ReactMarkdown from 'react-markdown';
 
 const ChatbotWidget = () => {
     const [abierto, setAbierto] = useState(false);
@@ -63,7 +64,10 @@ const ChatbotWidget = () => {
                     <div className="chatbot-mensajes">
                         {mensajes.map((msg, i) => (
                             <div key={i} className={`chatbot-mensaje chatbot-mensaje--${msg.rol}`}>
-                                {msg.texto}
+                                {msg.rol === 'bot'
+                                    ? <ReactMarkdown>{msg.texto}</ReactMarkdown>
+                                    : msg.texto
+                                }
                             </div>
                         ))}
                         {cargando && (
