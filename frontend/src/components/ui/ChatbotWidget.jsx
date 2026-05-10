@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import './ChatbotWidget.css';
 
 const ChatbotWidget = () => {
@@ -14,7 +14,6 @@ const ChatbotWidget = () => {
     const [cargando, setCargando] = useState(false);
     const bottomRef = useRef(null);
 
-    // Auto-scroll al último mensaje
     useEffect(() => {
         if (abierto) {
             bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -25,13 +24,12 @@ const ChatbotWidget = () => {
         const texto = input.trim();
         if (!texto || cargando) return;
 
-        // Agrega el mensaje del usuario a la lista
         setMensajes((prev) => [...prev, { rol: 'usuario', texto }]);
         setInput('');
         setCargando(true);
 
         try {
-            const res = await axios.post('/api/chatbot', { mensaje: texto });
+            const res = await api.post('/chatbot', { mensaje: texto });
             setMensajes((prev) => [
                 ...prev,
                 { rol: 'bot', texto: res.data.respuesta },
@@ -46,7 +44,6 @@ const ChatbotWidget = () => {
         }
     };
 
-    // Enviar con Enter (sin Shift)
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -56,7 +53,6 @@ const ChatbotWidget = () => {
 
     return (
         <div className="chatbot-widget">
-            {/* Ventana de chat */}
             {abierto && (
                 <div className="chatbot-ventana">
                     <div className="chatbot-header">
@@ -79,15 +75,15 @@ const ChatbotWidget = () => {
                     </div>
 
                     <div className="chatbot-input-area">
-            <textarea
-                className="chatbot-input"
-                placeholder="Escribe tu pregunta..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                rows={1}
-                disabled={cargando}
-            />
+                        <textarea
+                            className="chatbot-input"
+                            placeholder="Escribe tu pregunta..."
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            rows={1}
+                            disabled={cargando}
+                        />
                         <button
                             className="chatbot-enviar"
                             onClick={enviarMensaje}
@@ -99,7 +95,6 @@ const ChatbotWidget = () => {
                 </div>
             )}
 
-            {/* Burbuja flotante */}
             <button
                 className="chatbot-burbuja"
                 onClick={() => setAbierto((prev) => !prev)}
