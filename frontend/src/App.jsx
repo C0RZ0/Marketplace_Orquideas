@@ -4,6 +4,7 @@ import Footer from './components/layout/Footer';
 import WhatsAppBoton from './components/ui/WhatsAppBoton';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import SessionManager from './components/layout/SessionManager';
+import MiCuenta from './pages/MiCuenta';
 
 import Home from './pages/Home';
 import Macetas from './pages/Macetas';
@@ -31,6 +32,7 @@ const App = () => {
             <Checkout />
           </ProtectedRoute>
         } />
+        
         <Route path="/" element={<Home />} />
         <Route path="/macetas" element={<Macetas />} />
         <Route path="/guia" element={<Guia />} />
@@ -39,10 +41,13 @@ const App = () => {
         <Route path="/orquideas/:id" element={<DetalleOrquidea />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/mi-cuenta" element={
+          <ProtectedRoute>
+            <MiCuenta />
+          </ProtectedRoute>
+        } />
 
-        <Route
-          path="/carrito"
-          element={
+        <Route path="/carrito"element={
             <ProtectedRoute>
               <Carrito />
             </ProtectedRoute>
