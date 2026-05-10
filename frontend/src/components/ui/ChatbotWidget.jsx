@@ -25,12 +25,19 @@ const ChatbotWidget = () => {
         const texto = input.trim();
         if (!texto || cargando) return;
 
-        setMensajes((prev) => [...prev, { rol: 'usuario', texto }]);
+        const nuevosMensajes = [...mensajes, { rol: 'usuario', texto }];
+        setMensajes(nuevosMensajes);
         setInput('');
         setCargando(true);
 
         try {
-            const res = await api.post('/chatbot', { mensaje: texto });
+            const res = await api.post('/chatbot', {
+                mensaje: texto,
+                historial: mensajes.map(m => ({
+                    rol: m.rol,
+                    texto: m.texto
+                }))
+            });
             setMensajes((prev) => [
                 ...prev,
                 { rol: 'bot', texto: res.data.respuesta },
