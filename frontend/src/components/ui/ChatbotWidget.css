@@ -1,7 +1,7 @@
 /* Contenedor general — posición fija esquina inferior derecha */
 .chatbot-widget {
     position: fixed;
-    bottom: 5rem;
+    bottom: 8rem;
     right: 2rem;
     z-index: 1000;
     display: flex;
@@ -12,12 +12,12 @@
 
 /* Burbuja flotante */
 .chatbot-burbuja {
-    width: 60px;
+    width: 50px;
     height: 60px;
     border-radius: 50%;
     background-color: #7b4f8e;
     color: white;
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     border: none;
     cursor: pointer;
     box-shadow: 0 4px 16px rgba(0,0,0,0.25);
