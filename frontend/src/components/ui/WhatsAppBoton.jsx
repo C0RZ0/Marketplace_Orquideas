@@ -1,8 +1,3 @@
-// WhatsAppBoton.jsx
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import './WhatsAppBoton.css';
-
 const WhatsAppBoton = () => {
     const [urlWhatsapp, setUrlWhatsapp] = useState('https://wa.me/573014791094');
 
@@ -12,20 +7,21 @@ const WhatsAppBoton = () => {
             .catch(() => {});
     }, []);
 
-    return (
-        <a
-            href={urlWhatsapp}
-            target="_blank"
-            rel="noreferrer"
-            className="whatsapp-boton"
-        >
-        <img
-            src="/whatsapp.png"
-            alt="Contacto por WhatsApp"
-            className="whatsapp-icono"
-        />
-        </a>
-);
-};
+    const handleClick = () => {
+        window.open(urlWhatsapp, '_blank', 'noreferrer');
+    };
 
-export default WhatsAppBoton;
+    return (
+        <div
+            onClick={handleClick}
+            className="whatsapp-boton"
+            style={{ cursor: 'pointer' }}
+        >
+            <img
+                src="/whatsapp.png"
+                alt="Contacto por WhatsApp"
+                className="whatsapp-icono"
+            />
+        </div>
+    );
+};
