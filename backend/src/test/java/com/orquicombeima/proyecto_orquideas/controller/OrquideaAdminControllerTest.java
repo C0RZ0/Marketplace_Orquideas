@@ -2,6 +2,7 @@ package com.orquicombeima.proyecto_orquideas.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orquicombeima.proyecto_orquideas.dto.OrquideaDTO;
+import com.orquicombeima.proyecto_orquideas.security.JwtService;
 import com.orquicombeima.proyecto_orquideas.service.OrquideaAdminService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ class OrquideaAdminControllerTest {
     @Autowired private ObjectMapper objectMapper;
 
     @MockitoBean private OrquideaAdminService service;
+    @MockitoBean private JwtService jwtService;
 
     private OrquideaDTO dto;
 
