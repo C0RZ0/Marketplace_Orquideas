@@ -1,6 +1,7 @@
 package com.orquicombeima.proyecto_orquideas.controller;
 
 import com.orquicombeima.proyecto_orquideas.dto.MacetaDTO;
+import com.orquicombeima.proyecto_orquideas.security.JwtService;
 import com.orquicombeima.proyecto_orquideas.service.MacetaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,8 @@ class MacetaControllerTest {
 
     @Autowired private MockMvc mockMvc;
 
-    @MockitoBean
-    private JwtService jwtService;
-
     @MockitoBean private MacetaService service;
+    @MockitoBean private JwtService jwtService;
 
     @Test
     void GET_listarMacetas_devuelve200ConLista() throws Exception {

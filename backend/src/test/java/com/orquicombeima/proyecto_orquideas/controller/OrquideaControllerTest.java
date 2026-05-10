@@ -3,6 +3,7 @@ package com.orquicombeima.proyecto_orquideas.controller;
 import com.orquicombeima.proyecto_orquideas.dto.OrquideaDTO;
 import com.orquicombeima.proyecto_orquideas.dto.OrquideaDetalleDTO;
 import com.orquicombeima.proyecto_orquideas.dto.RecomendacionMacetaDTO;
+import com.orquicombeima.proyecto_orquideas.security.JwtService;
 import com.orquicombeima.proyecto_orquideas.service.OrquideaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ class OrquideaControllerTest {
     @Autowired private MockMvc mockMvc;
 
     @MockitoBean private OrquideaService service;
+    @MockitoBean private JwtService jwtService;
 
     private OrquideaDTO dto;
 
