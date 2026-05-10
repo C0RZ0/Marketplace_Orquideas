@@ -107,6 +107,7 @@ public class ChatbotService {
             return (String) parts.get(0).get("text");
 
         } catch (Exception e) {
+            e.printStackTrace();
             return "Lo siento, en este momento no puedo procesar tu pregunta. Por favor intenta más tarde";
         }
     }
