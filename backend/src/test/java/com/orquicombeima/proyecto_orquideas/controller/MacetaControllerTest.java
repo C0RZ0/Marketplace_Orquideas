@@ -21,6 +21,9 @@ class MacetaControllerTest {
 
     @Autowired private MockMvc mockMvc;
 
+    @MockitoBean
+    private JwtService jwtService;
+
     @MockitoBean private MacetaService service;
 
     @Test
