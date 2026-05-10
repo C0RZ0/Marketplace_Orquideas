@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatBotResponseDTO {
+public class ChatbotResponseDTO {
 
     private String respuesta;
 }
