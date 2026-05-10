@@ -114,6 +114,7 @@ class OrquideaAdminServiceTest {
     @Test
     void actualizarOrquidea_conImagenNueva_eliminaImagenAnteriorYSubeNueva() throws IOException {
         dto.setImagen(imagen);
+        String urlAnterior = orquidea.getImageUrl();  // ← capturar ANTES de llamar al service
         when(orquideaRepository.findById(1L)).thenReturn(Optional.of(orquidea));
         when(cloudinaryService.subirImagen(any(MultipartFile.class), eq("orquideas")))
                 .thenReturn("https://cloudinary.com/nueva.jpg");
@@ -121,7 +122,7 @@ class OrquideaAdminServiceTest {
 
         service.actualizarOrquidea(1L, dto);
 
-        verify(cloudinaryService).eliminarImagen(orquidea.getImageUrl());
+        verify(cloudinaryService).eliminarImagen(urlAnterior);  // ← usar la guardada
         verify(cloudinaryService).subirImagen(any(MultipartFile.class), eq("orquideas"));
     }
 
