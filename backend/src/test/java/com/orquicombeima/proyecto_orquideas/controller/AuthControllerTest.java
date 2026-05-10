@@ -3,6 +3,7 @@ package com.orquicombeima.proyecto_orquideas.controller;
 import com.orquicombeima.proyecto_orquideas.model.Usuario;
 import com.orquicombeima.proyecto_orquideas.model.enums.Rol;
 import com.orquicombeima.proyecto_orquideas.repository.UsuarioRepository;
+import com.orquicombeima.proyecto_orquideas.security.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ class AuthControllerTest {
     @Autowired private MockMvc mockMvc;
 
     @MockitoBean private UsuarioRepository usuarioRepository;
+    @MockitoBean private JwtService jwtService;
 
     private Usuario usuario;
 
