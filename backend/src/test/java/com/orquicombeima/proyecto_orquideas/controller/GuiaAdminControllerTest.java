@@ -1,6 +1,7 @@
 package com.orquicombeima.proyecto_orquideas.controller;
 
 import com.orquicombeima.proyecto_orquideas.dto.GuiaCuidadoDTO;
+import com.orquicombeima.proyecto_orquideas.security.JwtService;
 import com.orquicombeima.proyecto_orquideas.service.GuiaAdminService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ class GuiaAdminControllerTest {
     @Autowired private MockMvc mockMvc;
 
     @MockitoBean private GuiaAdminService service;
+    @MockitoBean private JwtService jwtService;
 
     private GuiaCuidadoDTO dto;
 
