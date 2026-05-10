@@ -3,7 +3,9 @@ package com.orquicombeima.proyecto_orquideas.controller;
 import com.orquicombeima.proyecto_orquideas.model.Usuario;
 import com.orquicombeima.proyecto_orquideas.model.enums.Rol;
 import com.orquicombeima.proyecto_orquideas.repository.UsuarioRepository;
+import com.orquicombeima.proyecto_orquideas.security.JwtAuthFilter;
 import com.orquicombeima.proyecto_orquideas.security.JwtService;
+import com.orquicombeima.proyecto_orquideas.security.OAuth2LoginSuccessHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +25,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = AuthController.class)
-@AutoConfigureMockMvc(addFilters = false)
 class AuthControllerTest {
 
     @Autowired private MockMvc mockMvc;
 
     @MockitoBean private UsuarioRepository usuarioRepository;
     @MockitoBean private JwtService jwtService;
+    @MockitoBean private JwtAuthFilter jwtAuthFilter;
+    @MockitoBean private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     private Usuario usuario;
 
