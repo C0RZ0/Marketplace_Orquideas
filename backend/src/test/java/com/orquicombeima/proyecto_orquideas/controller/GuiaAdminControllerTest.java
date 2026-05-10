@@ -1,5 +1,6 @@
 package com.orquicombeima.proyecto_orquideas.controller;
 
+<<<<<<< HEAD
 import com.orquicombeima.proyecto_orquideas.dto.GuiaCuidadoDTO;
 import com.orquicombeima.proyecto_orquideas.service.GuiaAdminService;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,3 +110,7 @@ class GuiaAdminControllerTest {
         verify(service).eliminarGuia(10L);
     }
 }
+=======
+public class GuiaAdminControllerTest {
+}
+>>>>>>> 2e8428fb1e3dcdb9ae36758625b546ccca5b5c54
