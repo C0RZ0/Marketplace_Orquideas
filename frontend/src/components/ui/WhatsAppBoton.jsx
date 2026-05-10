@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import './WhatsAppBoton.css';
 
 const WhatsAppBoton = () => {
     const [urlWhatsapp, setUrlWhatsapp] = useState('https://wa.me/573014791094');
 
     useEffect(() => {
-        axios.get('/api/contacto')
+        api.get('/contacto')
             .then(res => setUrlWhatsapp(res.data.urlWhatsapp))
             .catch(() => {});
     }, []);
