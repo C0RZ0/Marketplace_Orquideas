@@ -48,7 +48,8 @@ public class SecurityConfig {
                                 "/api/contenido/**",
                                 "/api/contacto/**",
                                 "/api/orquideas/**",
-                                "/api/webhook/**"
+                                "/api/webhook/**",
+                                "/api/chatbot/**"
                         ).permitAll()
                         // Rutas protegidas para clientes y administradores
                         .requestMatchers(
