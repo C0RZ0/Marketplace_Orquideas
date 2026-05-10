@@ -41,7 +41,7 @@ const useCarritoStore = create((set, get) => ({
   // Cambia la cantidad de un item
   cambiarCantidad: async (idItemCarrito, cantidad) => {
     try {
-      await api.put(`/carrito/${idItemCarrito}/cantidad?cantidad= ${cantidad}`);
+      await api.put(`/carrito/${idItemCarrito}/cantidad?cantidad=${cantidad}`);
       await get().cargarCarrito();
     } catch (err) {
       console.error('Error cambiando cantidad:', err);
