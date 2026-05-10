@@ -1,3 +1,7 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import './WhatsAppBoton.css';
+
 const WhatsAppBoton = () => {
     const [urlWhatsapp, setUrlWhatsapp] = useState('https://wa.me/573014791094');
 
@@ -25,3 +29,5 @@ const WhatsAppBoton = () => {
         </div>
     );
 };
+
+export default WhatsAppBoton;
