@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import useAuth from '../hooks/useAuth';
@@ -48,6 +48,7 @@ const CONTENT = {
 
 const formatearMoneda = (valor) => `$${Number(valor || 0).toLocaleString('es-CO')}`;
 const asegurarArreglo = (valor) => (Array.isArray(valor) ? valor : []);
+
 const ORQUIDEA_INICIAL = {
   nombre: '',
   descripcion: '',
@@ -60,6 +61,7 @@ const ORQUIDEA_INICIAL = {
   tiempoFloracion: '',
   activo: true,
 };
+
 const MACETA_INICIAL = {
   nombre: '',
   descripcion: '',
@@ -71,6 +73,46 @@ const MACETA_INICIAL = {
   estilo: '',
   activo: true,
 };
+
+const ESTADOS_COLOR = {
+  PENDIENTE: '#f59e0b',
+  PAGADO:    '#10b981',
+  ENVIADO:   '#3b82f6',
+  ENTREGADO: '#6366f1',
+  CANCELADO: '#ef4444',
+};
+
+const PedidosSidebar = ({ pedidos, cargando }) => (
+  <aside className="pedidos-sidebar">
+    <h3 className="pedidos-sidebar-title">
+      <span>📦</span> Pedidos recientes
+    </h3>
+    {cargando && <p className="pedidos-sidebar-empty">Cargando...</p>}
+    {!cargando && pedidos.length === 0 && (
+      <p className="pedidos-sidebar-empty">Sin pedidos recientes.</p>
+    )}
+    <ul className="pedidos-sidebar-list">
+      {pedidos.slice(0, 8).map((p) => (
+        <li key={`sidebar-pedido-${p.id}`} className="pedidos-sidebar-item">
+          <div className="pedidos-sidebar-row">
+            <span className="pedidos-sidebar-id">#{p.id}</span>
+            <span
+              className="pedidos-sidebar-estado"
+              style={{ color: ESTADOS_COLOR[p.estado] || '#6b7280' }}
+            >
+              {p.estado}
+            </span>
+          </div>
+          <div className="pedidos-sidebar-cliente">{p.nombreCliente}</div>
+          <div className="pedidos-sidebar-meta">
+            <span>{formatearMoneda(p.total)}</span>
+            <span className="pedidos-sidebar-tiempo">{p.tiempoTranscurrido}</span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </aside>
+);
 
 const AdminPanel = () => {
   const { usuario, logout } = useAuth();
@@ -95,6 +137,8 @@ const AdminPanel = () => {
   const [formularioCargando, setFormularioCargando] = useState(false);
   const [formularioMensaje, setFormularioMensaje] = useState('');
   const [formularioError, setFormularioError] = useState('');
+  const [cargandoSidebar, setCargandoSidebar] = useState(false);
+  const [pedidosSidebar, setPedidosSidebar] = useState([]);
 
   const section = useMemo(
     () => CONTENT[activeSection] || CONTENT.Inicio,
@@ -196,6 +240,18 @@ const AdminPanel = () => {
       setCargando('Configuración', false);
     }
   };
+
+  const cargarSidebarPedidos = useCallback(async () => {
+    setCargandoSidebar(true);
+    try {
+      const { data } = await api.get('/admin/pedidos/recientes');
+      setPedidosSidebar(asegurarArreglo(data));
+    } catch { /* silencioso */ } finally {
+      setCargandoSidebar(false);
+    }
+  }, []);
+
+  useEffect(() => { cargarSidebarPedidos(); }, [cargarSidebarPedidos]);
 
   useEffect(() => {
     if (activeSection === 'Inicio' && !seccionesCargadas.Inicio && !cargandoSeccion.Inicio) {
@@ -991,6 +1047,9 @@ const AdminPanel = () => {
 
           <p>{section.text}</p>
         </section>
+
+        <PedidosSidebar pedidos={pedidosSidebar} cargando={cargandoSidebar} />
+
       </div>
     </main>
   );
