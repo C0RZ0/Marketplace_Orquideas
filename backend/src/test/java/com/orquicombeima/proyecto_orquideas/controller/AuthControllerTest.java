@@ -3,6 +3,7 @@ package com.orquicombeima.proyecto_orquideas.controller;
 import com.orquicombeima.proyecto_orquideas.model.Usuario;
 import com.orquicombeima.proyecto_orquideas.model.enums.Rol;
 import com.orquicombeima.proyecto_orquideas.repository.UsuarioRepository;
+import com.orquicombeima.proyecto_orquideas.shared.config.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 // Para AuthController usamos standaloneSetup en vez de @WebMvcTest porque:
 // 1. El controller recibe Authentication como parámetro, y la combinación @WebMvcTest + addFilters=false
 //    no resuelve bien la inyección del Authentication en la request
-// 2. standaloneSetup monta SOLO este controller en un dispatcher mínimo, sin Spring context completo
-// 3. Las RuntimeException se convierten en HTTP 500 automáticamente (default de DispatcherServlet)
+// 2. standaloneSetup monta SOLO este controller en un dispatcher mínimo
+// 3. Registramos manualmente el GlobalExceptionHandler para que las RuntimeException se conviertan en 404
+//    (que es lo que hace la app real)
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
 
@@ -39,7 +41,11 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        // .setControllerAdvice() hace que el dispatcher de standaloneSetup atrape las RuntimeException
+        // y las convierta en HTTP 404 igual que el handler global de la app
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         usuario = new Usuario();
         usuario.setId(42L);
@@ -82,10 +88,13 @@ class AuthControllerTest {
     }
 
     @Test
-    void GET_me_emailNoEnBD_devuelve500() throws Exception {
+    void GET_me_emailNoEnBD_devuelve404() throws Exception {
+        // El controller lanza RuntimeException cuando el email del token no aparece en la BD.
+        // El GlobalExceptionHandler la atrapa y devuelve 404 con un body { "error": "Usuario no encontrado" }
         when(usuarioRepository.findByEmail("fantasma@test.com")).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/auth/me").principal(authFor("fantasma@test.com", "CLIENTE")))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Usuario no encontrado"));
     }
 }
