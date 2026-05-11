@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 // Servicio que orquesta todo el flujo de creación y consulta de pedidos
 //  - crearPedido: convierte el carrito del usuario en un Pedido, genera el link de Wompi, confirma reservas y vacía el carrito
@@ -98,8 +99,10 @@ public class PedidoService {
         // Por las anotaciones cascade=ALL en Pedido, también se guardan en cascada los items y la dirección
         pedido = pedidoRepository.save(pedido);
 
-        // 9. Generamos el link de Wompi: esto crea el PagoWompi en BD, lo asocia al pedido y devuelve la URL
-        String linkPago = pagoWompiService.generarEnlacePago(pedido);
+        // 9. Generamos el pago en Wompi: se crea el registro de pago en la BD y se obtiene el link de pago
+        Map<String, String> pagoInfo = pagoWompiService.generarEnlacePago(pedido);
+        String linkPago = pagoInfo.get("linkPago");
+        String firmaIntegridad = pagoInfo.get("firmaIntegridad");
 
         // 10. Confirmamos las reservas del carrito: descuenta el stock real y limpia el stockReservado
         // Los items que estaban "apartados" pasan a estar realmente vendidos
