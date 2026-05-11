@@ -3,41 +3,44 @@ package com.orquicombeima.proyecto_orquideas.controller;
 import com.orquicombeima.proyecto_orquideas.model.Usuario;
 import com.orquicombeima.proyecto_orquideas.model.enums.Rol;
 import com.orquicombeima.proyecto_orquideas.repository.UsuarioRepository;
-import com.orquicombeima.proyecto_orquideas.security.JwtAuthFilter;
-import com.orquicombeima.proyecto_orquideas.security.JwtService;
-import com.orquicombeima.proyecto_orquideas.security.OAuth2LoginSuccessHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = AuthController.class)
+// Para AuthController usamos standaloneSetup en vez de @WebMvcTest porque:
+// 1. El controller recibe Authentication como parámetro, y la combinación @WebMvcTest + addFilters=false
+//    no resuelve bien la inyección del Authentication en la request
+// 2. standaloneSetup monta SOLO este controller en un dispatcher mínimo, sin Spring context completo
+// 3. Las RuntimeException se convierten en HTTP 500 automáticamente (default de DispatcherServlet)
+@ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
 
-    @Autowired private MockMvc mockMvc;
+    @Mock private UsuarioRepository usuarioRepository;
 
-    @MockitoBean private UsuarioRepository usuarioRepository;
-    @MockitoBean private JwtService jwtService;
-    @MockitoBean private JwtAuthFilter jwtAuthFilter;
-    @MockitoBean private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    @InjectMocks private AuthController controller;
+
+    private MockMvc mockMvc;
 
     private Usuario usuario;
 
     @BeforeEach
     void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+
         usuario = new Usuario();
         usuario.setId(42L);
         usuario.setNombre("Rosa");
@@ -45,7 +48,7 @@ class AuthControllerTest {
         usuario.setRol(Rol.CLIENTE);
     }
 
-    // Helper: arma un Authentication de prueba con email + rol, listo para inyectar al controller
+    // Helper: arma un Authentication de prueba con email + rol, listo para usar como Principal en la request
     private UsernamePasswordAuthenticationToken authFor(String email, String rol) {
         return new UsernamePasswordAuthenticationToken(
                 email, null, List.of(new SimpleGrantedAuthority("ROLE_" + rol)));
@@ -55,8 +58,7 @@ class AuthControllerTest {
     void GET_me_devuelveDatosDelUsuarioAutenticado() throws Exception {
         when(usuarioRepository.findByEmail("rosa@test.com")).thenReturn(Optional.of(usuario));
 
-        mockMvc.perform(get("/api/auth/me")
-                        .with(authentication(authFor("rosa@test.com", "CLIENTE"))))
+        mockMvc.perform(get("/api/auth/me").principal(authFor("rosa@test.com", "CLIENTE")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idUsuario").value(42))
                 .andExpect(jsonPath("$.nombre").value("Rosa"))
@@ -74,20 +76,16 @@ class AuthControllerTest {
 
         when(usuarioRepository.findByEmail("admin@test.com")).thenReturn(Optional.of(admin));
 
-        mockMvc.perform(get("/api/auth/me")
-                        .with(authentication(authFor("admin@test.com", "ADMINISTRADOR"))))
+        mockMvc.perform(get("/api/auth/me").principal(authFor("admin@test.com", "ADMINISTRADOR")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rol").value("ADMINISTRADOR"));
     }
 
     @Test
     void GET_me_emailNoEnBD_devuelve500() throws Exception {
-        // El controller lanza RuntimeException cuando el email del token no aparece en la BD
-        // (caso raro pero posible: borraron el usuario después de emitir el JWT)
         when(usuarioRepository.findByEmail("fantasma@test.com")).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/auth/me")
-                        .with(authentication(authFor("fantasma@test.com", "CLIENTE"))))
+        mockMvc.perform(get("/api/auth/me").principal(authFor("fantasma@test.com", "CLIENTE")))
                 .andExpect(status().isInternalServerError());
     }
 }
