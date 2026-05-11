@@ -12,6 +12,7 @@
 
 /* Burbuja flotante */
 .chatbot-burbuja {
+    position: relative;
     width: 55px;
     height: 55px;
     border-radius: 50%;
@@ -155,20 +156,6 @@
 .chatbot-enviar:hover:not(:disabled) { background-color: #5e3a6e; }
 .chatbot-enviar:disabled { opacity: 0.5; cursor: default; }
 
-/*RESPONSIVE EN CELULAR*/
-@media (max-width: 480px) {
-    .chatbot-widget {
-        bottom: 5rem;
-        right: 1rem;
-    }
-
-    .chatbot-ventana {
-        width: calc(100vw - 2rem);
-        max-height: 70vh;
-        border-radius: 12px;
-    }
-}
-
 /* Badge de exclamación animado */
 .chatbot-badge {
     position: absolute;
@@ -208,4 +195,35 @@
 @keyframes aparecer {
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/*RESPONSIVE EN CELULAR*/
+@media (max-width: 480px) {
+    .chatbot-widget {
+        bottom: 5rem;
+        right: 1rem;
+    }
+
+    .chatbot-ventana {
+        width: calc(100vw - 2rem);
+        max-height: 70vh;
+        border-radius: 12px;
+    }
+
+    .chatbot-tooltip {
+        max-width: 160px;
+        font-size: 0.8rem;
+        padding: 8px 10px;
+    }
+
+    .chatbot-badge {
+        width: 18px;
+        height: 18px;
+        font-size: 0.7rem;
+    }
+
+    .chatbot-tooltip {
+        right: 0;
+        left: auto;
+    }
 }
