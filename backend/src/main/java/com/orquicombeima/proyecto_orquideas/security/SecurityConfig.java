@@ -54,7 +54,8 @@ public class SecurityConfig {
                                 "/api/contenido/**",
                                 "/api/contacto/**",
                                 "/api/orquideas/**",
-                                "/api/webhook/**"
+                                "/api/webhook/**",
+                                "/api/chatbot/**"
                         ).permitAll()
                         // Rutas protegidas para clientes y administradores
                         .requestMatchers(
@@ -88,7 +89,7 @@ public class SecurityConfig {
                 .collect(Collectors.toList());
 
         configuration.setAllowedOrigins(allowedOrigins);  // Rutas del frontend permitidas
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));    // Métodos HTTP permitidos
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));    // Métodos HTTP permitidos
         configuration.setAllowedHeaders(List.of("*"));  // Permitir todos los encabezados
         configuration.setAllowCredentials(true);    // Permitir el envío de cookies y credenciales
 

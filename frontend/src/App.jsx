@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import WhatsAppBoton from './components/ui/WhatsAppBoton';
+import ChatbotWidget from './components/ui/ChatbotWidget';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import SessionManager from './components/layout/SessionManager';
 import MiCuenta from './pages/MiCuenta';
@@ -17,6 +18,9 @@ import AuthCallback from './pages/AuthCallback';
 import NotFound from './pages/NotFound';
 import Carrito from './pages/Carrito';
 import Checkout from './pages/Checkout';
+import AdminPanel from './pages/AdminPanel';
+import PagoExitoso from './pages/PagoExitoso';
+import PagoRechazado from './pages/PagoRechazado';
 
 const App = () => {
   return (
@@ -41,6 +45,11 @@ const App = () => {
         <Route path="/orquideas/:id" element={<DetalleOrquidea />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/admin" element={
+          <ProtectedRoute>
+            <AdminPanel />
+          </ProtectedRoute>
+        } />
         <Route path="/mi-cuenta" element={
           <ProtectedRoute>
             <MiCuenta />
@@ -54,12 +63,17 @@ const App = () => {
           }
         />
 
+        {/* Rutas de resultado de pago */}
+        <Route path="/pago-exitoso" element={<PagoExitoso />} />
+        <Route path="/pago-rechazado" element={<PagoRechazado />} />
+
         {/* Siempre de ultima */}
         <Route path="*" element={<NotFound />} />
       </Routes>
 
       <Footer />
       <WhatsAppBoton />
+        <ChatbotWidget />
     </BrowserRouter>
   );
 };
