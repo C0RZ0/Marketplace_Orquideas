@@ -112,7 +112,7 @@ public class PedidoService {
         carritoService.vaciarCarrito(emailUsuario);
 
         // 12. Devolvemos el DTO con el link de pago para que el frontend redirija al usuario a Wompi
-        return mapearAPedidoDTO(pedido, linkPago);
+        return mapearAPedidoDTO(pedido, linkPago, firmaIntegridad);
     }
 
     // GET /api/pedidos/historial
@@ -128,7 +128,7 @@ public class PedidoService {
         // Convertimos cada pedido a DTO; en el historial NO mandamos linkPago (ya pasó el momento de pagar)
         List<PedidoDTO> resultado = new ArrayList<>();
         for (Pedido pedido : pedidos) {
-            resultado.add(mapearAPedidoDTO(pedido, null));
+            resultado.add(mapearAPedidoDTO(pedido, null, null));
         }
         return resultado;
     }
@@ -178,7 +178,7 @@ public class PedidoService {
 
     // Convierte el Pedido completo en su DTO de respuesta
     // El linkPago viene como parámetro porque solo se llena al crear (no en el historial)
-    private PedidoDTO mapearAPedidoDTO(Pedido pedido, String linkPago) {
+    private PedidoDTO mapearAPedidoDTO(Pedido pedido, String linkPago, String firmaIntegridad) {
         // Mapeamos cada item con un for normal para que sea fácil de leer
         List<ItemPedidoDTO> itemsDTO = new ArrayList<>();
         for (ItemPedido item : pedido.getItems()) {
@@ -205,6 +205,7 @@ public class PedidoService {
                 .fechaPedido(pedido.getFechaPedido())
                 .linkPago(linkPago)
                 .referenciaPago(referenciaPago)
+                .firmaIntegridad(firmaIntegridad)
                 .build();
     }
 }
