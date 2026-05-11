@@ -132,6 +132,24 @@
   font-size: 1rem;
 }
 
+.admin-chart-card {
+  border: 1px solid #e8ecea;
+  border-radius: 10px;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  background: #fff;
+}
+
+.admin-chart-container {
+  width: 100%;
+  height: 280px;
+}
+
+.admin-chart-empty {
+  margin: 0;
+  color: #64748b;
+}
+
 .admin-table-wrapper {
   overflow-x: auto;
   border: 1px solid #e8ecea;
