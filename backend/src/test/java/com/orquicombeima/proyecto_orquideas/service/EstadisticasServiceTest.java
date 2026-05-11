@@ -2,7 +2,6 @@ package com.orquicombeima.proyecto_orquideas.service;
 
 import com.orquicombeima.proyecto_orquideas.dto.EstadisticasDTO;
 import com.orquicombeima.proyecto_orquideas.model.Pedido;
-import com.orquicombeima.proyecto_orquideas.model.Usuario;
 import com.orquicombeima.proyecto_orquideas.model.enums.EstadoPedido;
 import com.orquicombeima.proyecto_orquideas.repository.PedidoRepository;
 import com.orquicombeima.proyecto_orquideas.repository.UsuarioRepository;
@@ -18,7 +17,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class EstadisticasServiceTest {
@@ -30,12 +29,15 @@ class EstadisticasServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Por defecto los métodos del repo devuelven listas vacías; los tests sobreescriben lo que necesitan
-        when(pedidoRepository.findByFechaPedidoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        // Stubs por defecto: devolver vacío/cero. Marcados como lenient() porque algunos tests
+        // los sobreescriben con datos específicos y Mockito strict-mode reportaría "unnecessary stubbing"
+        // en esos casos. Con lenient() solo se valida que TODOS los tests pasen sin importar
+        // si cada uno usa o no este stub específico.
+        lenient().when(pedidoRepository.findByFechaPedidoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(List.of());
-        when(pedidoRepository.findByEstado(EstadoPedido.PENDIENTE)).thenReturn(List.of());
-        when(pedidoRepository.findVentasPorMes(any(LocalDateTime.class))).thenReturn(List.of());
-        when(usuarioRepository.count()).thenReturn(0L);
+        lenient().when(pedidoRepository.findByEstado(EstadoPedido.PENDIENTE)).thenReturn(List.of());
+        lenient().when(pedidoRepository.findVentasPorMes(any(LocalDateTime.class))).thenReturn(List.of());
+        lenient().when(usuarioRepository.count()).thenReturn(0L);
     }
 
     private Pedido pedidoCon(EstadoPedido estado, double total) {
@@ -49,7 +51,7 @@ class EstadisticasServiceTest {
     void obtenerEstadisticas_ventasMesSumaSoloPedidosPagados() {
         // Llegan 3 pedidos: 2 pagados (50000 + 30000) y 1 pendiente (40000)
         // ventasMes debe ser 80000, no 120000
-        when(pedidoRepository.findByFechaPedidoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        lenient().when(pedidoRepository.findByFechaPedidoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(List.of(
                         pedidoCon(EstadoPedido.PAGADO, 50000.0),
                         pedidoCon(EstadoPedido.PENDIENTE, 40000.0),
@@ -63,11 +65,11 @@ class EstadisticasServiceTest {
 
     @Test
     void obtenerEstadisticas_pedidosPendientesYClientesRegistrados() {
-        when(pedidoRepository.findByEstado(EstadoPedido.PENDIENTE)).thenReturn(List.of(
+        lenient().when(pedidoRepository.findByEstado(EstadoPedido.PENDIENTE)).thenReturn(List.of(
                 pedidoCon(EstadoPedido.PENDIENTE, 0.0),
                 pedidoCon(EstadoPedido.PENDIENTE, 0.0),
                 pedidoCon(EstadoPedido.PENDIENTE, 0.0)));
-        when(usuarioRepository.count()).thenReturn(42L);
+        lenient().when(usuarioRepository.count()).thenReturn(42L);
 
         EstadisticasDTO dto = service.obtenerEstadisticas();
 
@@ -81,7 +83,7 @@ class EstadisticasServiceTest {
         // Mes 1 = enero, Mes 5 = mayo
         Object[] fila1 = new Object[]{1, 2026, 200000.0};
         Object[] fila2 = new Object[]{5, 2026, 350000.0};
-        when(pedidoRepository.findVentasPorMes(any(LocalDateTime.class))).thenReturn(List.of(fila1, fila2));
+        lenient().when(pedidoRepository.findVentasPorMes(any(LocalDateTime.class))).thenReturn(List.of(fila1, fila2));
 
         EstadisticasDTO dto = service.obtenerEstadisticas();
 
