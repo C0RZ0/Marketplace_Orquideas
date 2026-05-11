@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import useAuth from '../hooks/useAuth';
 import api from '../services/api';
@@ -115,8 +115,7 @@ const PedidosSidebar = ({ pedidos, cargando }) => (
 );
 
 const AdminPanel = () => {
-  const { usuario, logout } = useAuth();
-  const navigate = useNavigate();
+  const { usuario } = useAuth();
   const [activeSection, setActiveSection] = useState('Inicio');
   const [metricas, setMetricas] = useState(null);
   const [productos, setProductos] = useState({ orquideas: [], macetas: [] });
@@ -379,11 +378,6 @@ const AdminPanel = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/', { replace: true });
-  };
-
   const totalProductos = productos.orquideas.length + productos.macetas.length;
   const productosActivos =
     productos.orquideas.filter((item) => item.activo).length +
@@ -412,14 +406,6 @@ const AdminPanel = () => {
               </button>
             ))}
           </nav>
-
-          <button
-            type="button"
-            className="admin-sidebar-item admin-logout-item"
-            onClick={handleLogout}
-          >
-            Cerrar Sesión
-          </button>
         </aside>
 
         <section className="admin-content">

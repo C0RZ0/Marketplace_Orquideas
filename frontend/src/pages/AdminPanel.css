@@ -57,13 +57,6 @@
   font-weight: 700;
 }
 
-.admin-logout-item {
-  margin-top: auto;
-  border-color: #f3c5c5;
-  background: #fff5f5;
-  color: #9b2226;
-}
-
 .admin-content {
   padding: 1.5rem;
   min-height: 420px;
