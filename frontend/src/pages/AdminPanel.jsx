@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import useAuth from '../hooks/useAuth';
 import api from '../services/api';
 import './AdminPanel.css';
@@ -335,6 +336,7 @@ const AdminPanel = () => {
   const admins = clientes.filter((item) => item.rol === 'ADMINISTRADOR').length;
   const clientesFinales = totalClientes - admins;
   const formularioActivo = tipoFormulario === 'orquidea' ? orquideaForm : macetaForm;
+  const ventasUltimos6Meses = asegurarArreglo(metricas?.ventasPorMes).slice(-6);
 
   return (
     <main className="admin-panel-page">
@@ -848,7 +850,33 @@ const AdminPanel = () => {
                     </article>
                   </div>
 
-                  <h3 className="admin-subtitle">Ventas por mes (últimos 6 meses)</h3>
+                  <h3 className="admin-subtitle">Gráfica de ventas mensuales (últimos 6 meses)</h3>
+                  <div className="admin-chart-card">
+                    {ventasUltimos6Meses.length > 0 ? (
+                      <div className="admin-chart-container">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={ventasUltimos6Meses}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="mes" />
+                            <YAxis tickFormatter={(valor) => formatearMoneda(valor)} />
+                            <Tooltip formatter={(valor) => formatearMoneda(valor)} />
+                            <Line
+                              type="monotone"
+                              dataKey="totalVentas"
+                              stroke="#2d6a4f"
+                              strokeWidth={3}
+                              dot={{ r: 4 }}
+                              activeDot={{ r: 6 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : (
+                      <p className="admin-chart-empty">Aún no hay información de ventas para graficar.</p>
+                    )}
+                  </div>
+
+                  <h3 className="admin-subtitle">Detalle de ventas por mes</h3>
                   <div className="admin-table-wrapper">
                     <table className="admin-table">
                       <thead>
@@ -858,13 +886,13 @@ const AdminPanel = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {asegurarArreglo(metricas.ventasPorMes).map((item, index) => (
+                        {ventasUltimos6Meses.map((item, index) => (
                           <tr key={`venta-mes-${item.mes}-${index}`}>
                             <td>{item.mes}</td>
                             <td>{formatearMoneda(item.totalVentas)}</td>
                           </tr>
                         ))}
-                        {asegurarArreglo(metricas.ventasPorMes).length === 0 && (
+                        {ventasUltimos6Meses.length === 0 && (
                           <tr>
                             <td colSpan={2} className="admin-empty-cell">
                               Aún no hay información de ventas por mes.
