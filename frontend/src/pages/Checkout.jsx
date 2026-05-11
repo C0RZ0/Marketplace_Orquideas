@@ -32,7 +32,7 @@ const Checkout = () => {
   const [isOpeningWompi, setIsOpeningWompi] = useState(false);
 
   const subtotal = useMemo(
-      () => items.reduce((acc, item) => acc + item.precioUnitario * item.cantidad, 0),
+      () => items.reduce((acc, item) => acc + item.precio * item.cantidad, 0),
       [items]
   );
   const envio = 10000;
@@ -225,13 +225,13 @@ const Checkout = () => {
               {items.map((item) => (
                   <div key={item.id} className="checkout-item">
                     <div>
-                      <p className="checkout-item-name">{item.nombreProducto}</p>
+                      <p className="checkout-item-name">{item.nombre}</p>
                       <p className="checkout-item-meta">
-                        {item.cantidad} x ${item.precioUnitario?.toLocaleString('es-CO')}
+                        {item.cantidad} x ${item.precio?.toLocaleString('es-CO')}
                       </p>
                     </div>
                     <p className="checkout-item-total">
-                      ${(item.precioUnitario * item.cantidad).toLocaleString('es-CO')}
+                      ${(item.precio * item.cantidad).toLocaleString('es-CO')}
                     </p>
                   </div>
               ))}
