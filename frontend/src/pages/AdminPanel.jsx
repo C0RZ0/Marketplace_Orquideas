@@ -251,6 +251,18 @@ const AdminPanel = () => {
     }
   };
 
+  const eliminarProducto = async (id, tipo) => {
+    const confirmar = window.confirm('¿Confirma que desea eliminar "${nombre}"? Esta acción no se puede deshacer.');
+    if (!confirmar) return;
+    try {
+      const endpoint = tipo === 'orquideas' ? `/admin/orquideas/${id}` : `/admin/macetas/${id}`;
+      await api.delete(endpoint);
+      await cargarProductos();
+      window.alert('Producto eliminado correctamente.');
+    } catch {
+      window.alert('No se pudo eliminar el producto.');
+    }
+  };
   useEffect(() => { cargarSidebarPedidos(); }, [cargarSidebarPedidos]);
 
   useEffect(() => {
@@ -489,6 +501,13 @@ const AdminPanel = () => {
                               >
                                 {item.activo ? 'Desactivar' : 'Activar'}
                               </button>
+                              <button
+                                type="button"
+                                className="admin-table-action admin-table-action--danger"
+                                onClick={() => eliminarProducto(item.id, 'orquideas')}
+                              >
+                                Eliminar
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -538,6 +557,13 @@ const AdminPanel = () => {
                                 onClick={() => toggleActivoProducto('macetas', item.id)}
                               >
                                 {item.activo ? 'Desactivar' : 'Activar'}
+                              </button>
+                              <button
+                                type="button"
+                                className="admin-table-action admin-table-action--danger"
+                                onClick={() => eliminarProducto(item.id, 'macetas')}
+                              >
+                                Eliminar
                               </button>
                             </td>
                           </tr>
