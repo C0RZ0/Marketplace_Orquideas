@@ -418,3 +418,12 @@
     display: none;
   }
 }
+
+.admin-table-action--danger {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.admin-table-action--danger:hover {
+  background-color: #fef2f2;
+}

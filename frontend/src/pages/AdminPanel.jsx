@@ -71,8 +71,8 @@ const MACETA_INICIAL = {
 
 const ESTADOS_COLOR = {
   PENDIENTE: '#f59e0b',
-  PAGADO:    '#10b981',
-  ENVIADO:   '#3b82f6',
+  PAGADO: '#10b981',
+  ENVIADO: '#3b82f6',
   ENTREGADO: '#6366f1',
   CANCELADO: '#ef4444',
 };
@@ -134,6 +134,7 @@ const AdminPanel = () => {
   const [productoEditando, setProductoEditando] = useState(null);
   const [tipoProductoEditando, setTipoProductoEditando] = useState(null);
   const [guardandoProducto, setGuardandoProducto] = useState(false);
+  const [modalEliminar, setModalEliminar] = useState(null);
 
   const section = useMemo(
     () => CONTENT[activeSection] || CONTENT.Inicio,
@@ -251,6 +252,23 @@ const AdminPanel = () => {
     }
   };
 
+  const confirmarEliminar = (tipo, id, nombre) => {
+    setModalEliminar({ tipo, id, nombre });
+  };
+
+  const ejecutarEliminar = async () => {
+    const { tipo, id } = modalEliminar;
+    setModalEliminar(null);
+    try {
+      const endpoint = tipo === 'orquideas'
+        ? `/admin/orquideas/${id}`
+        : `/admin/macetas/${id}`;
+      await api.delete(endpoint);
+      await cargarProductos();
+    } catch {
+      window.alert('No se pudo eliminar el producto.');
+    }
+  };
   useEffect(() => { cargarSidebarPedidos(); }, [cargarSidebarPedidos]);
 
   useEffect(() => {
@@ -489,6 +507,13 @@ const AdminPanel = () => {
                               >
                                 {item.activo ? 'Desactivar' : 'Activar'}
                               </button>
+                              <button
+                                type="button"
+                                className="admin-table-action admin-table-action--danger"
+                                onClick={() => confirmarEliminar('orquideas', item.id, item.nombre)}
+                              >
+                                Eliminar
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -538,6 +563,13 @@ const AdminPanel = () => {
                                 onClick={() => toggleActivoProducto('macetas', item.id)}
                               >
                                 {item.activo ? 'Desactivar' : 'Activar'}
+                              </button>
+                              <button
+                                type="button"
+                                className="admin-table-action admin-table-action--danger"
+                                onClick={() => confirmarEliminar('macetas', item.id, item.nombre)}
+                              >
+                                Eliminar
                               </button>
                             </td>
                           </tr>
@@ -1095,6 +1127,64 @@ const AdminPanel = () => {
         </div>
       )}
 
+      {modalEliminar && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#fff',
+            borderRadius: '12px',
+            padding: '2rem',
+            maxWidth: '420px',
+            width: '90%',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.15)'
+          }}>
+            <span className="material-icons" style={{ fontSize: '2.5rem', color: '#ef4444', marginBottom: '0.75rem', display: 'block' }}>
+              delete_forever
+            </span>
+            <h3 style={{ color: '#1B4332', marginBottom: '0.5rem' }}>
+              Eliminar producto
+            </h3>
+            <p style={{ color: '#666', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+              ¿Seguro que quieres eliminar <strong>"{modalEliminar.nombre}"</strong>?<br />
+              Esta acción no se puede deshacer.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+              <button
+                onClick={() => setModalEliminar(null)}
+                style={{
+                  padding: '0.6rem 1.5rem',
+                  borderRadius: '20px',
+                  border: '1px solid #ddd',
+                  cursor: 'pointer',
+                  backgroundColor: '#fff',
+                  fontSize: '0.9rem'
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={ejecutarEliminar}
+                style={{
+                  padding: '0.6rem 1.5rem',
+                  borderRadius: '20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: '#ef4444',
+                  color: '#fff',
+                  fontSize: '0.9rem'
+                }}
+              >
+                Sí, eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };
