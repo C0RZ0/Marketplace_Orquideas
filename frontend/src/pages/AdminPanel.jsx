@@ -12,7 +12,6 @@ const MENU_ITEMS = [
   'Pedidos',
   'Clientes',
   'Análisis',
-  'Configuración',
 ];
 
 const CONTENT = {
@@ -39,10 +38,6 @@ const CONTENT = {
   Análisis: {
     title: 'Análisis',
     text: 'Métricas del negocio, ventas y tendencias.',
-  },
-  Configuración: {
-    title: 'Configuración',
-    text: 'Ajustes operativos y preferencias del panel.',
   },
 };
 
@@ -85,7 +80,7 @@ const ESTADOS_COLOR = {
 const PedidosSidebar = ({ pedidos, cargando }) => (
   <aside className="pedidos-sidebar">
     <h3 className="pedidos-sidebar-title">
-      <span>📦</span> Pedidos recientes
+      <span>Pedidos recientes</span>
     </h3>
     {cargando && <p className="pedidos-sidebar-empty">Cargando...</p>}
     {!cargando && pedidos.length === 0 && (
@@ -121,8 +116,6 @@ const AdminPanel = () => {
   const [productos, setProductos] = useState({ orquideas: [], macetas: [] });
   const [pedidos, setPedidos] = useState([]);
   const [clientes, setClientes] = useState([]);
-  const [contenidosPagina, setContenidosPagina] = useState([]);
-  const [recomendaciones, setRecomendaciones] = useState([]);
   const [cargandoSeccion, setCargandoSeccion] = useState({});
   const [erroresSeccion, setErroresSeccion] = useState({});
   const [seccionesCargadas, setSeccionesCargadas] = useState({});
@@ -138,6 +131,9 @@ const AdminPanel = () => {
   const [formularioError, setFormularioError] = useState('');
   const [cargandoSidebar, setCargandoSidebar] = useState(false);
   const [pedidosSidebar, setPedidosSidebar] = useState([]);
+  const [productoEditando, setProductoEditando] = useState(null);
+  const [tipoProductoEditando, setTipoProductoEditando] = useState(null);
+  const [guardandoProducto, setGuardandoProducto] = useState(false);
 
   const section = useMemo(
     () => CONTENT[activeSection] || CONTENT.Inicio,
@@ -222,36 +218,6 @@ const AdminPanel = () => {
     }
   };
 
-  const cargarConfiguracion = async () => {
-    marcarSeccionCargada(['Configuración']);
-    setCargando('Configuración', true);
-    setError('Configuración', '');
-    try {
-      const [contenidoResponse, recomendacionesResponse] = await Promise.all([
-        api.get('/admin/contenido-pagina'),
-        api.get('/admin/recomendaciones'),
-      ]);
-      setContenidosPagina(asegurarArreglo(contenidoResponse.data));
-      setRecomendaciones(asegurarArreglo(recomendacionesResponse.data));
-    } catch {
-      setError('Configuración', 'No se pudo cargar la configuración del panel.');
-    } finally {
-      setCargando('Configuración', false);
-    }
-  };
-
-  const eliminarRecomendacion = async (id) => {
-    const confirmar = window.confirm('¿Estás seguro de eliminar esta recomendación?');
-    if (!confirmar) return;
-    try {
-      await api.delete(`/admin/recomendaciones/${id}`);
-      await cargarConfiguracion();
-      window.alert('Recomendación eliminada correctamente.');
-    } catch {
-      window.alert('No se pudo eliminar la recomendación.');
-    }
-  };
-
   const cargarSidebarPedidos = useCallback(async () => {
     setCargandoSidebar(true);
     try {
@@ -261,6 +227,29 @@ const AdminPanel = () => {
       setCargandoSidebar(false);
     }
   }, []);
+
+  const abrirEditorProducto = (producto, tipo) => {
+    setProductoEditando({ ...producto });
+    setTipoProductoEditando(tipo);
+  };
+
+  const guardarProducto = async () => {
+    setGuardandoProducto(true);
+    try {
+      const endpoint = tipoProductoEditando === 'orquideas'
+        ? `/admin/orquideas/${productoEditando.id}`
+        : `/admin/macetas/${productoEditando.id}`;
+      await api.put(endpoint, productoEditando);
+      setProductoEditando(null);
+      setTipoProductoEditando(null);
+      await cargarProductos();
+      window.alert('Producto actualizado correctamente.');
+    } catch {
+      window.alert('No se pudo actualizar el producto.');
+    } finally {
+      setGuardandoProducto(false);
+    }
+  };
 
   useEffect(() => { cargarSidebarPedidos(); }, [cargarSidebarPedidos]);
 
@@ -279,13 +268,6 @@ const AdminPanel = () => {
     }
     if (activeSection === 'Clientes' && !seccionesCargadas.Clientes && !cargandoSeccion.Clientes) {
       cargarClientes();
-    }
-    if (
-      activeSection === 'Configuración' &&
-      !seccionesCargadas.Configuración &&
-      !cargandoSeccion.Configuración
-    ) {
-      cargarConfiguracion();
     }
   }, [activeSection, cargandoSeccion, seccionesCargadas]);
 
@@ -308,21 +290,9 @@ const AdminPanel = () => {
       cargarMetricas(activeSection);
       return;
     }
-    if (activeSection === 'Productos') {
-      cargarProductos();
-      return;
-    }
-    if (activeSection === 'Pedidos') {
-      cargarPedidos();
-      return;
-    }
-    if (activeSection === 'Clientes') {
-      cargarClientes();
-      return;
-    }
-    if (activeSection === 'Configuración') {
-      cargarConfiguracion();
-    }
+    if (activeSection === 'Productos') { cargarProductos(); return; }
+    if (activeSection === 'Pedidos') { cargarPedidos(); return; }
+    if (activeSection === 'Clientes') { cargarClientes(); }
   };
 
   const actualizarFormulario = (tipo, campo, valor) => {
@@ -493,7 +463,7 @@ const AdminPanel = () => {
                           <th>Precio</th>
                           <th>Stock</th>
                           <th>Estado</th>
-                          <th>Acción</th>
+                          <th>Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -504,7 +474,14 @@ const AdminPanel = () => {
                             <td>{formatearMoneda(item.precio)}</td>
                             <td>{item.stock}</td>
                             <td>{item.activo ? 'Activo' : 'Inactivo'}</td>
-                            <td>
+                            <td style={{ display: 'flex', gap: '0.5rem' }}>
+                              <button
+                                type="button"
+                                className="admin-table-action"
+                                onClick={() => abrirEditorProducto(item, 'orquideas')}
+                              >
+                                Editar
+                              </button>
                               <button
                                 type="button"
                                 className="admin-table-action"
@@ -536,7 +513,7 @@ const AdminPanel = () => {
                           <th>Precio</th>
                           <th>Stock</th>
                           <th>Estado</th>
-                          <th>Acción</th>
+                          <th>Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -547,7 +524,14 @@ const AdminPanel = () => {
                             <td>{formatearMoneda(item.precio)}</td>
                             <td>{item.stock}</td>
                             <td>{item.activo ? 'Activo' : 'Inactivo'}</td>
-                            <td>
+                            <td style={{ display: 'flex', gap: '0.5rem' }}>
+                              <button
+                                type="button"
+                                className="admin-table-action"
+                                onClick={() => abrirEditorProducto(item, 'macetas')}
+                              >
+                                Editar
+                              </button>
                               <button
                                 type="button"
                                 className="admin-table-action"
@@ -962,104 +946,155 @@ const AdminPanel = () => {
             </>
           )}
 
-          {activeSection === 'Configuración' && (
-            <>
-              {cargandoSeccion.Configuración && <p>Cargando configuración...</p>}
-              {!cargandoSeccion.Configuración && !erroresSeccion.Configuración && (
-                <>
-                  <div className="admin-metrics-grid">
-                    <article className="admin-metric-card">
-                      <span className="admin-metric-label">Bloques de contenido</span>
-                      <strong className="admin-metric-value">{contenidosPagina.length}</strong>
-                    </article>
-                    <article className="admin-metric-card">
-                      <span className="admin-metric-label">Recomendaciones</span>
-                      <strong className="admin-metric-value">{recomendaciones.length}</strong>
-                    </article>
-                  </div>
-
-                  <h3 className="admin-subtitle">Contenido de página</h3>
-                  <div className="admin-table-wrapper">
-                    <table className="admin-table">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Tipo</th>
-                          <th>Título</th>
-                          <th>Orden</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {contenidosPagina.map((item) => (
-                          <tr key={`contenido-${item.id}`}>
-                            <td>{item.id}</td>
-                            <td>{item.tipo}</td>
-                            <td>{item.titulo}</td>
-                            <td>{item.orden ?? '-'}</td>
-                          </tr>
-                        ))}
-                        {contenidosPagina.length === 0 && (
-                          <tr>
-                            <td colSpan={4} className="admin-empty-cell">
-                              No hay contenido configurado.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <h3 className="admin-subtitle">Recomendaciones</h3>
-                  <div className="admin-table-wrapper">
-                    <table className="admin-table">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Orquídea</th>
-                          <th>Maceta</th>
-                          <th>Descripción</th>
-                          <th>Acciones</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {recomendaciones.map((item) => (
-                          <tr key={`recomendacion-${item.id}`}>
-                            <td>{item.id}</td>
-                            <td>{item.nombreOrquidea}</td>
-                            <td>{item.nombreMaceta}</td>
-                            <td>{item.descripcion}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className="admin-table-action"
-                                style={{ color: '#E91E8C', borderColor: '#E91E8C' }}
-                                onClick={() => eliminarRecomendacion(item.id)}
-                              >
-                                Eliminar
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                        {recomendaciones.length === 0 && (
-                          <tr>
-                            <td colSpan={4} className="admin-empty-cell">
-                              No hay recomendaciones registradas.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </>
-              )}
-            </>
-          )}
-
         </section>
 
         <PedidosSidebar pedidos={pedidosSidebar} cargando={cargandoSidebar} />
 
       </div>
+
+      {/* Modal de edición de producto */}
+      {productoEditando && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#fff', borderRadius: '12px', padding: '2rem',
+            width: '90%', maxWidth: '600px', maxHeight: '80vh', overflowY: 'auto'
+          }}>
+            <h3 style={{ color: '#1B4332', marginBottom: '1.5rem' }}>
+              Editar {tipoProductoEditando === 'orquideas' ? 'Orquídea' : 'Maceta'}
+            </h3>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+
+              <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                Nombre
+                <input value={productoEditando.nombre || ''}
+                  onChange={(e) => setProductoEditando(prev => ({ ...prev, nombre: e.target.value }))}
+                  style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+              </label>
+
+              <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                Precio
+                <input type="number" value={productoEditando.precio || ''}
+                  onChange={(e) => setProductoEditando(prev => ({ ...prev, precio: e.target.value }))}
+                  style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+              </label>
+
+              <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                Stock
+                <input type="number" value={productoEditando.stock || ''}
+                  onChange={(e) => setProductoEditando(prev => ({ ...prev, stock: e.target.value }))}
+                  style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+              </label>
+
+              <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                Estado
+                <select value={productoEditando.activo ? 'true' : 'false'}
+                  onChange={(e) => setProductoEditando(prev => ({ ...prev, activo: e.target.value === 'true' }))}
+                  style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }}>
+                  <option value="true">Activo</option>
+                  <option value="false">Inactivo</option>
+                </select>
+              </label>
+
+              <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', gridColumn: '1 / -1' }}>
+                Descripción
+                <textarea rows={3} value={productoEditando.descripcion || ''}
+                  onChange={(e) => setProductoEditando(prev => ({ ...prev, descripcion: e.target.value }))}
+                  style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+              </label>
+
+              {tipoProductoEditando === 'orquideas' && (
+                <>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    Variedad
+                    <input value={productoEditando.variedad || ''}
+                      onChange={(e) => setProductoEditando(prev => ({ ...prev, variedad: e.target.value }))}
+                      style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    Color de flor
+                    <input value={productoEditando.colorFlor || ''}
+                      onChange={(e) => setProductoEditando(prev => ({ ...prev, colorFlor: e.target.value }))}
+                      style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    Tamaño
+                    <input value={productoEditando.tamanio || ''}
+                      onChange={(e) => setProductoEditando(prev => ({ ...prev, tamanio: e.target.value }))}
+                      style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    Nivel de cuidado
+                    <input value={productoEditando.nivelCuidado || ''}
+                      onChange={(e) => setProductoEditando(prev => ({ ...prev, nivelCuidado: e.target.value }))}
+                      style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    Tiempo de floración
+                    <input value={productoEditando.tiempoFloracion || ''}
+                      onChange={(e) => setProductoEditando(prev => ({ ...prev, tiempoFloracion: e.target.value }))}
+                      style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+                  </label>
+                </>
+              )}
+
+              {tipoProductoEditando === 'macetas' && (
+                <>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    Material
+                    <input value={productoEditando.material || ''}
+                      onChange={(e) => setProductoEditando(prev => ({ ...prev, material: e.target.value }))}
+                      style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    Diámetro (cm)
+                    <input type="number" value={productoEditando.diametroCm || ''}
+                      onChange={(e) => setProductoEditando(prev => ({ ...prev, diametroCm: e.target.value }))}
+                      style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    Color
+                    <input value={productoEditando.color || ''}
+                      onChange={(e) => setProductoEditando(prev => ({ ...prev, color: e.target.value }))}
+                      style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    Estilo
+                    <input value={productoEditando.estilo || ''}
+                      onChange={(e) => setProductoEditando(prev => ({ ...prev, estilo: e.target.value }))}
+                      style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd' }} />
+                  </label>
+                </>
+              )}
+
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
+              <button
+                type="button"
+                onClick={() => setProductoEditando(null)}
+                style={{ padding: '0.6rem 1.5rem', borderRadius: '20px', border: '1px solid #ddd', cursor: 'pointer', backgroundColor: '#fff' }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={guardarProducto}
+                disabled={guardandoProducto}
+                style={{ padding: '0.6rem 1.5rem', borderRadius: '20px', border: 'none', cursor: 'pointer', backgroundColor: '#2D6A4F', color: '#fff' }}
+              >
+                {guardandoProducto ? 'Guardando...' : 'Guardar cambios'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </main>
   );
 };
