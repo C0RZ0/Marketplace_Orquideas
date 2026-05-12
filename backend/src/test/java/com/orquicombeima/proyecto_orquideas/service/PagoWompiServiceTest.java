@@ -92,7 +92,8 @@ class PagoWompiServiceTest {
 
     @Test
     void generarEnlacePago_construyeUrlConPublicKeyYMontoEnCentavos() {
-        String url = service.generarEnlacePago(pedido);
+        Map<String, String> resultado = service.generarEnlacePago(pedido);  // ← FIX
+        String url = resultado.get("linkPago");
 
         assertThat(url).startsWith("https://checkout.wompi.co/p/");
         assertThat(url).contains("public-key=pub_test_xxx");
@@ -101,13 +102,18 @@ class PagoWompiServiceTest {
         assertThat(url).contains("reference=pedido-500-");
         assertThat(url).contains("signature:integrity=");
         assertThat(url).contains("redirect-url=https://front.local/pago/resultado");
+
+        // Nuevos asserts: aprovechamos que ahora el Map expone firma y referencia por separado
+        assertThat(resultado.get("referencia")).startsWith("pedido-500-");
+        assertThat(resultado.get("firmaIntegridad")).isNotBlank();
+        assertThat(resultado.get("firmaIntegridad")).hasSize(64);  // SHA-256 hex = 64 chars
     }
 
     @Test
     void generarEnlacePago_montoConDecimales_redondea() {
         pedido.setTotal(99.99);
 
-        String url = service.generarEnlacePago(pedido);
+        String url = service.generarEnlacePago(pedido).get("linkPago");  // ← FIX
 
         // Math.round(99.99 * 100) = Math.round(9999.0) = 9999
         assertThat(url).contains("amount-in-cents=9999");
