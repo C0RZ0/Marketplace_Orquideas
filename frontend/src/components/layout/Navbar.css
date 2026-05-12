@@ -139,3 +139,12 @@
   border-color: #E91E8C;
   color: #FAF7F5;
 }
+
+.navbar-usuario-nombre {
+  color: #1B4332;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}

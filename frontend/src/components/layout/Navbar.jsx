@@ -48,7 +48,7 @@ const Navbar = () => {
 
           {/* Si SI esta logueado muestra el nombre y boton de cerrar sesion */}
           {isLoggedIn && usuario && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {usuario.rol === 'ADMINISTRADOR' && (
                 <Link to="/admin" className="navbar-panel-btn">
                   Panel
@@ -57,7 +57,7 @@ const Navbar = () => {
               <Link to="/mi-cuenta" className="navbar-mi-cuenta">
                 Mi cuenta
               </Link>
-              <span style={{ color: '#1B4332', fontSize: '0.9rem' }}>
+              <span className="navbar-usuario-nombre">
                 Hola, {usuario.nombre}
               </span>
               <button
