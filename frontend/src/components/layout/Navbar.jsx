@@ -62,15 +62,7 @@ const Navbar = () => {
               </span>
               <button
                 onClick={() => setMostrarModalSalir(true)}
-                style={{
-                  backgroundColor: 'transparent',
-                  border: '1px solid #2D6A4F',
-                  color: '#2D6A4F',
-                  padding: '0.4rem 1rem',
-                  borderRadius: '20px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem'
-                }}
+                className= "navbar-btn-salir"
               >
                 Salir
               </button>
