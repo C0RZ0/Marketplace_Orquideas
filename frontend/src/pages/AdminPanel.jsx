@@ -240,6 +240,18 @@ const AdminPanel = () => {
     }
   };
 
+  const eliminarRecomendacion = async (id) => {
+    const confirmar = window.confirm('¿Estás seguro de eliminar esta recomendación?');
+    if (!confirmar) return;
+    try {
+      await api.delete(`/admin/recomendaciones/${id}`);
+      await cargarConfiguracion();
+      window.alert('Recomendación eliminada correctamente.');
+    } catch {
+      window.alert('No se pudo eliminar la recomendación.');
+    }
+  };
+
   const cargarSidebarPedidos = useCallback(async () => {
     setCargandoSidebar(true);
     try {
@@ -1006,6 +1018,7 @@ const AdminPanel = () => {
                           <th>Orquídea</th>
                           <th>Maceta</th>
                           <th>Descripción</th>
+                          <th>Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1015,6 +1028,16 @@ const AdminPanel = () => {
                             <td>{item.nombreOrquidea}</td>
                             <td>{item.nombreMaceta}</td>
                             <td>{item.descripcion}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="admin-table-action"
+                                style={{ color: '#E91E8C', borderColor: '#E91E8C' }}
+                                onClick={() => eliminarRecomendacion(item.id)}
+                              >
+                                Eliminar
+                              </button>
+                            </td>
                           </tr>
                         ))}
                         {recomendaciones.length === 0 && (
