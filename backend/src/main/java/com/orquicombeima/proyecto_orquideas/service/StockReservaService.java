@@ -184,4 +184,28 @@ public class StockReservaService {
             }
         }
     }
+
+    // Ajusta la reserva cuando el usuario cambia la cantidad de un item en el carrito
+    @Transactional
+    public void ajustarReserva(Long idCarrito, Long idProducto, int nuevaCantidad) {
+        List<ReservaCarrito> reservas = reservaCarritoRepository
+                .findByCarritoIdAndEstado(idCarrito, EstadoReserva.ACTIVA);
+
+        for (ReservaCarrito reserva : reservas) {
+            if (reserva.getProducto().getId().equals(idProducto)) {
+                Producto producto = reserva.getProducto();
+                int diferencia = nuevaCantidad - reserva.getCantidadReservada();
+
+                // Si diferencia > 0 está aumentando, si < 0 está disminuyendo
+                int nuevoStockReservado = producto.getStockReservado() + diferencia;
+                producto.setStockReservado(Math.max(0, nuevoStockReservado));
+                productoRepository.save(producto);
+
+                reserva.setCantidadReservada(nuevaCantidad);
+                reserva.setFechaExpiracion(LocalDateTime.now().plusMinutes(MINUTOS_EXPIRACION));
+                reservaCarritoRepository.save(reserva);
+                break;
+            }
+        }
+    }
 }
