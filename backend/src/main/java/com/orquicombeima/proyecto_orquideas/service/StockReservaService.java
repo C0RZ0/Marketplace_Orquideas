@@ -118,7 +118,8 @@ public class StockReservaService {
         // Por cada reserva vencida devolvemos el stock al producto y cambiamos el estado a EXPIRADA
         for (ReservaCarrito reserva : reservasExpiradas) {
             Producto producto = reserva.getProducto();
-            producto.setStockReservado(producto.getStockReservado() - reserva.getCantidadReservada());
+            int nuevoStockReservado = producto.getStockReservado() - reserva.getCantidadReservada();
+            producto.setStockReservado(Math.max(0, nuevoStockReservado));
             productoRepository.save(producto);
 
             reserva.setEstado(EstadoReserva.EXPIRADA);
@@ -155,7 +156,8 @@ public class StockReservaService {
 
         for (ReservaCarrito reserva : reservasActivas) {
             Producto producto = reserva.getProducto();
-            producto.setStockReservado(producto.getStockReservado() - reserva.getCantidadReservada());
+            int nuevoStockReservado = producto.getStockReservado() - reserva.getCantidadReservada();
+            producto.setStockReservado(Math.max(0, nuevoStockReservado));
             productoRepository.save(producto);
 
             reserva.setEstado(EstadoReserva.CANCELADA);
@@ -172,7 +174,8 @@ public class StockReservaService {
         for (ReservaCarrito reserva : reservas) {
             if (reserva.getProducto().getId().equals(idProducto)) {
                 Producto producto = reserva.getProducto();
-                producto.setStockReservado(producto.getStockReservado() - reserva.getCantidadReservada());
+                int nuevoStockReservado = producto.getStockReservado() - reserva.getCantidadReservada();
+                producto.setStockReservado(Math.max(0, nuevoStockReservado));
                 productoRepository.save(producto);
 
                 reserva.setEstado(EstadoReserva.CANCELADA);
